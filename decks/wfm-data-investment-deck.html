@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WFM + Data — Investment Proposal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#E7ECF0;
+  --panel:#FBFCFD;
+  --ink:#14202B;
+  --muted:#59697A;
+  --line:#CAD4DD;
+  --teal:#0F6E56;
+  --teal-2:#14947A;
+  --teal-wash:#DCEBE6;
+  --amber:#B26414;
+  --amber-wash:#F0E1CB;
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);color:var(--ink);background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+}
+.deck{scroll-snap-type:y mandatory;height:100vh;overflow-y:scroll;scroll-behavior:smooth}
+.slide{
+  min-height:100vh;scroll-snap-align:start;position:relative;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:6vh clamp(28px,7vw,120px) 6vh clamp(70px,10vw,150px);
+}
+/* left rail signature */
+.rail{
+  position:absolute;left:clamp(20px,3.2vw,44px);top:0;bottom:0;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  padding:26px 0;
+}
+.rail .spine{flex:1;width:2px;background:linear-gradient(var(--teal),var(--line))}
+.rail .code{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);
+  writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.rail .dotmark{width:9px;height:9px;border-radius:50%;background:var(--teal)}
+
+.eyebrow{font-family:var(--mono);font-size:clamp(10px,1vw,12px);letter-spacing:.24em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--amber)}
+
+h1{font-family:var(--display);font-weight:600;line-height:1.02;letter-spacing:-.02em;
+  font-size:clamp(34px,5.6vw,74px);max-width:16ch}
+h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.015em;
+  font-size:clamp(28px,4vw,52px)}
+.lead{font-size:clamp(15px,1.5vw,21px);line-height:1.5;color:var(--muted);
+  max-width:56ch;margin-top:22px;font-weight:400}
+.sub{font-size:clamp(14px,1.4vw,18px);line-height:1.5;color:var(--muted);max-width:64ch;margin-top:14px}
+
+/* slide 1 cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px;max-width:1000px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px 20px;
+  border-top:3px solid var(--teal)}
+.card:nth-child(3){border-top-color:var(--amber)}
+.card .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.card .v{font-family:var(--display);font-size:clamp(20px,2.2vw,27px);font-weight:600;margin:10px 0 8px;letter-spacing:-.01em}
+.card .d{font-size:13.5px;line-height:1.45;color:var(--muted)}
+.card .v .amber{color:var(--amber)}
+.card .v .teal{color:var(--teal)}
+
+/* generic figure */
+.figure{margin-top:30px;width:100%;max-width:1040px}
+.figure svg{width:100%;height:auto;display:block}
+
+.notecap{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:22px;
+  display:flex;gap:10px;align-items:baseline;max-width:80ch;line-height:1.5}
+.notecap b{color:var(--ink);font-weight:500}
+
+/* slide 3 transition */
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:34px;max-width:1060px}
+.area{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:24px}
+.area h3{font-family:var(--display);font-size:20px;font-weight:600;display:flex;align-items:baseline;gap:12px}
+.area h3 .count{font-family:var(--mono);font-size:13px;color:var(--teal);font-weight:500}
+.area p{font-size:14px;line-height:1.55;color:var(--muted);margin-top:14px}
+.area p .hl{color:var(--ink);font-weight:500}
+.barrow{display:flex;align-items:center;gap:10px;margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.barrow .bar{height:12px;border-radius:2px}
+.barrow .b-de-now{width:22px;background:var(--line)}
+.barrow .b-de-to{width:150px;background:var(--teal)}
+.barrow .b-bi{width:150px;background:var(--muted)}
+
+/* slide 5 ask */
+.asklayout{display:grid;grid-template-columns:0.9fr 1.1fr;gap:34px;margin-top:34px;max-width:1080px;align-items:start}
+.principles{list-style:none;display:flex;flex-direction:column;gap:14px}
+.principles li{display:grid;grid-template-columns:90px 1fr;gap:16px;align-items:baseline;
+  padding-bottom:14px;border-bottom:1px solid var(--line)}
+.principles .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.principles li:last-child .tag{color:var(--amber)}
+.principles .txt{font-size:14px;line-height:1.5;color:var(--muted)}
+.principles .txt b{color:var(--ink);font-weight:600}
+.approve{background:var(--ink);color:#EAF0F2;border-radius:4px;padding:26px 24px;margin-top:26px;max-width:1080px}
+.approve .k{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber-wash);margin-bottom:12px}
+.approve .t{font-family:var(--display);font-size:clamp(18px,2vw,24px);font-weight:500;line-height:1.35;letter-spacing:-.01em}
+.approve .t b{color:#fff;font-weight:600}
+
+/* cadence / iterative loop slide */
+.loopwrap{display:grid;grid-template-columns:0.95fr 1.05fr;gap:44px;margin-top:32px;max-width:1080px;align-items:center}
+.loopnote{font-size:clamp(14px,1.4vw,17px);line-height:1.6;color:var(--muted)}
+.loopnote b{color:var(--ink);font-weight:600}
+.loopnote .tag{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);display:block;margin-top:22px}
+
+/* milestone list */
+.milestones{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:15px 26px;margin-top:22px;max-width:1080px}
+.milestones li{display:grid;grid-template-columns:25px 1fr;gap:11px;align-items:start}
+.milestones .n{font-family:var(--mono);font-size:12px;font-weight:500;color:#fff;background:var(--teal);width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.milestones li.hl .n{background:var(--amber)}
+.milestones .mt{font-size:13.5px;line-height:1.35;color:var(--ink);font-weight:500}
+.milestones .md{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+
+/* progress dots */
+.nav{position:fixed;right:26px;bottom:26px;display:flex;gap:9px;z-index:20}
+.nav button{width:9px;height:9px;border-radius:50%;border:1px solid var(--muted);background:transparent;cursor:pointer;padding:0;transition:all .2s}
+.nav button.on{background:var(--teal);border-color:var(--teal);transform:scale(1.25)}
+.hint{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);font-family:var(--mono);
+  font-size:11px;letter-spacing:.1em;color:var(--muted);z-index:20;opacity:.8}
+
+/* entrance */
+.slide>*{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.slide.vis>*{opacity:1;transform:none}
+.slide.vis>*:nth-child(2){transition-delay:.06s}
+.slide.vis>*:nth-child(3){transition-delay:.12s}
+.slide.vis>*:nth-child(4){transition-delay:.18s}
+.slide.vis>*:nth-child(5){transition-delay:.24s}
+
+@media (max-width:820px){
+  .cards{grid-template-columns:1fr}
+  .tgrid{grid-template-columns:1fr}
+  .asklayout{grid-template-columns:1fr}
+  .slide{padding:8vh 24px 10vh 58px}
+}
+@media (prefers-reduced-motion:reduce){
+  .slide>*{opacity:1;transform:none;transition:none}
+  html,.deck{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1 -->
+  <section class="slide" id="s1">
+    <div class="rail"><span class="dotmark"></span><span class="code">01 · THESIS</span><span class="spine"></span></div>
+    <div class="eyebrow">Investment proposal — WFM + Data</div>
+    <h1>Turn WFM&nbsp;+&nbsp;Data into the engine XOOS sells.</h1>
+    <p class="lead">Today, two per-account support teams. Restructured into a shared center and a federated edge, they become the multitenant planning and data supply XOOS runs on — the thing that makes WFaaS and data products sellable.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="k">Scope</div>
+        <div class="v">52 people, reshaped</div>
+        <div class="d">40 in WFM, 12 in Data — restructured over 14 months into one center-and-edge model.</div>
+      </div>
+      <div class="card">
+        <div class="k">Why it matters</div>
+        <div class="v"><span class="teal">Enables XOOS</span></div>
+        <div class="d">Monitoring, the agentify roadmap, and classic-vs-AI analytics are all WFM + Data intelligence. This team produces what XOOS sells.</div>
+      </div>
+      <div class="card">
+        <div class="k">The ask</div>
+        <div class="v"><span class="amber">Staged investment</span></div>
+        <div class="d">Data-engineering hires as the project needs them, plus a one-time build. WFM and BI reshaped without net growth.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 -->
+  <section class="slide" id="s2">
+    <div class="rail"><span class="dotmark"></span><span class="code">02 · MODEL</span><span class="spine"></span></div>
+    <div class="eyebrow">Target operating model</div>
+    <h2>One shape, both areas.</h2>
+    <p class="sub">Centralize what gains from scale and consistency. Embed what needs local context. One service layer protects paying capacity — and the whole thing feeds XOOS through a single data contract.</p>
+    <div class="figure">
+      <svg viewBox="0 0 1000 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Target operating model: shared center and federated edge for WFM and Data, feeding XOOS.">
+        <!-- column headers -->
+        <text x="270" y="26" text-anchor="middle" font-family="Space Grotesk" font-size="16" font-weight="600" fill="#14202B">WFM</text>
+        <text x="730" y="26" text-anchor="middle" font-family="Space Grotesk" font-size="16" font-weight="600" fill="#14202B">Data</text>
+        <!-- band labels -->
+        <text x="14" y="92" font-family="IBM Plex Mono" font-size="11" fill="#59697A">CENTER</text>
+        <text x="14" y="106" font-family="IBM Plex Mono" font-size="11" fill="#59697A">(CoE)</text>
+        <text x="14" y="212" font-family="IBM Plex Mono" font-size="11" fill="#59697A">EDGE</text>
+        <text x="14" y="300" font-family="IBM Plex Mono" font-size="11" fill="#59697A">SHARED</text>
+
+        <!-- CENTER band -->
+        <g>
+          <rect x="70" y="46" width="390" height="120" rx="6" fill="#DCEBE6" stroke="#0F6E56" stroke-width="1"/>
+          <rect x="88" y="66" width="170" height="80" rx="4" fill="#FBFCFD" stroke="#0F6E56" stroke-width="1"/>
+          <text x="173" y="100" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="600" fill="#14202B">Planning &amp;</text>
+          <text x="173" y="118" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="600" fill="#14202B">Forecasting CoE</text>
+          <rect x="272" y="66" width="170" height="80" rx="4" fill="#FBFCFD" stroke="#0F6E56" stroke-width="1"/>
+          <text x="357" y="102" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="600" fill="#14202B">Practice &amp;</text>
+          <text x="357" y="120" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="600" fill="#14202B">Enablement</text>
+
+          <rect x="540" y="46" width="390" height="120" rx="6" fill="#DCEBE6" stroke="#0F6E56" stroke-width="1"/>
+          <rect x="556" y="66" width="118" height="80" rx="4" fill="#FBFCFD" stroke="#0F6E56" stroke-width="1"/>
+          <text x="615" y="102" text-anchor="middle" font-family="Space Grotesk" font-size="13.5" font-weight="600" fill="#14202B">DE</text>
+          <text x="615" y="119" text-anchor="middle" font-family="Space Grotesk" font-size="13.5" font-weight="600" fill="#14202B">Platform</text>
+          <rect x="682" y="66" width="118" height="80" rx="4" fill="#FBFCFD" stroke="#0F6E56" stroke-width="1"/>
+          <text x="741" y="110" text-anchor="middle" font-family="Space Grotesk" font-size="13.5" font-weight="600" fill="#14202B">Governance</text>
+          <rect x="808" y="66" width="106" height="80" rx="4" fill="#FBFCFD" stroke="#0F6E56" stroke-width="1"/>
+          <text x="861" y="110" text-anchor="middle" font-family="Space Grotesk" font-size="13.5" font-weight="600" fill="#14202B">BI CoE</text>
+        </g>
+
+        <!-- EDGE band -->
+        <g>
+          <rect x="70" y="180" width="390" height="66" rx="6" fill="#FBFCFD" stroke="#59697A" stroke-width="1" stroke-dasharray="1 0"/>
+          <text x="265" y="209" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="600" fill="#14202B">WF POCs · per account</text>
+          <text x="265" y="229" text-anchor="middle" font-family="Inter" font-size="12.5" fill="#59697A">embedded RTA &amp; scheduling</text>
+          <rect x="540" y="180" width="390" height="66" rx="6" fill="#FBFCFD" stroke="#59697A" stroke-width="1"/>
+          <text x="735" y="209" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="600" fill="#14202B">BI satellites · on demand</text>
+          <text x="735" y="229" text-anchor="middle" font-family="Inter" font-size="12.5" fill="#59697A">pods routed by intake</text>
+        </g>
+
+        <!-- tiers strip -->
+        <rect x="70" y="262" width="860" height="34" rx="5" fill="#FBFCFD" stroke="#B26414" stroke-width="1"/>
+        <text x="500" y="284" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#B26414">Capacity tiers  ·  dedicated-external  ·  dedicated-internal  ·  shared-flex</text>
+        <!-- service strip -->
+        <rect x="70" y="304" width="860" height="40" rx="5" fill="#14202B"/>
+        <text x="500" y="329" text-anchor="middle" font-family="IBM Plex Mono" font-size="12.5" fill="#EAF0F2">Service &amp; demand  ·  capacity management  ·  SLA / service  ·  intake</text>
+
+        <!-- XOOS -->
+        <line x1="735" y1="344" x2="735" y2="392" stroke="#B26414" stroke-width="1.5"/>
+        <polygon points="731,388 739,388 735,396" fill="#B26414"/>
+        <text x="748" y="372" font-family="IBM Plex Mono" font-size="11.5" fill="#B26414">Gold-layer contract</text>
+        <rect x="360" y="398" width="320" height="56" rx="6" fill="#F0E1CB" stroke="#B26414" stroke-width="1.2" stroke-dasharray="6 4"/>
+        <text x="520" y="422" text-anchor="middle" font-family="Space Grotesk" font-size="15" font-weight="600" fill="#14202B">XOOS</text>
+        <text x="520" y="440" text-anchor="middle" font-family="Inter" font-size="12" fill="#59697A">separate product — we supply its data</text>
+      </svg>
+    </div>
+    <div class="notecap"><b>Read it:</b> teal = the shared center that makes capability sellable; the dashed edge is embedded per account; the dark strip is the one layer that keeps paying capacity ring-fenced.</div>
+  </section>
+
+  <!-- SLIDE 3 -->
+  <section class="slide" id="s3">
+    <div class="rail"><span class="dotmark"></span><span class="code">03 · TRANSITION</span><span class="spine"></span></div>
+    <div class="eyebrow">From here to there</div>
+    <h2>Mostly reshape, not rehire.</h2>
+    <p class="sub">The current teams are already the raw material. Two different moves: WFM gets restructured at flat headcount; Data’s growth is concentrated almost entirely in engineering.</p>
+    <div class="tgrid">
+      <div class="area">
+        <h3>WFM <span class="count">40 → 40 · flat</span></h3>
+        <p>Unbundle forecasting out of embedded analysts into a <span class="hl">central Planning CoE</span>. Leads and analysts become <span class="hl">WF POCs</span> at the edge; real-time analysts move into tiered delivery. Same people — reskilled to plan <span class="hl">human + AI capacity</span>.</p>
+        <div class="barrow"><span class="bar b-de-to" style="width:150px"></span><span>40 reskilled &amp; repurposed</span></div>
+      </div>
+      <div class="area">
+        <h3>Data <span class="count">12 → ~22 · growth in DE</span></h3>
+        <p>The growth is engineering. <span class="hl">DE goes 2 → ~10</span> to become the platform backbone. BI stays flat, re-routed as on-demand satellites + a CoE. <span class="hl">Governance stood up from zero.</span></p>
+        <div class="barrow"><span class="bar b-de-now"></span><span>DE today · 2</span></div>
+        <div class="barrow"><span class="bar b-de-to"></span><span>DE target · ~10</span></div>
+        <div class="barrow"><span class="bar b-bi"></span><span>BI · ~10 (flat)</span></div>
+      </div>
+    </div>
+    <div class="notecap"><b>Reporting is a matrix:</b> the account’s CX POC directs the work day to day; the CoE holds the functional line — it requests, trains, develops, and replaces the staff.</div>
+  </section>
+
+  <!-- SLIDE 4 — CADENCE -->
+  <section class="slide" id="s3b">
+    <div class="rail"><span class="dotmark"></span><span class="code">04 · CADENCE</span><span class="spine"></span></div>
+    <div class="eyebrow">How it runs</div>
+    <h2>A tuning loop, not a finish line.</h2>
+    <div class="loopwrap">
+      <div class="loopnote">
+        The 14-month roadmap stands up a <b>capability</b>, not a one-off deliverable. Once the machine exists, WFM&nbsp;+&nbsp;Data run as a permanent loop — continuously sensing what operations and reporting need, deciding what to build or retune, and implementing it.
+        <br><br>
+        So this isn't a project that ends. It's an <b>engine that keeps the data and operational-reporting infrastructure tuned</b> as accounts, KPIs, and the AI mix keep changing.
+        <span class="tag">The build sets up the loop. The loop never stops.</span>
+      </div>
+      <div class="figure" style="margin-top:0">
+        <svg viewBox="0 0 560 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A continuous loop: analyze, decide, implement, repeat.">
+          <rect x="18" y="34" width="150" height="72" rx="6" fill="#DCEBE6" stroke="#0F6E56"/>
+          <text x="93" y="64" text-anchor="middle" font-family="Space Grotesk" font-size="16" font-weight="600" fill="#14202B">Analyze</text>
+          <text x="93" y="86" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#59697A">needs · drift · demand</text>
+          <rect x="205" y="34" width="150" height="72" rx="6" fill="#DCEBE6" stroke="#0F6E56"/>
+          <text x="280" y="64" text-anchor="middle" font-family="Space Grotesk" font-size="16" font-weight="600" fill="#14202B">Decide</text>
+          <text x="280" y="86" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#59697A">prioritize · dedupe · charter</text>
+          <rect x="392" y="34" width="150" height="72" rx="6" fill="#DCEBE6" stroke="#0F6E56"/>
+          <text x="467" y="64" text-anchor="middle" font-family="Space Grotesk" font-size="16" font-weight="600" fill="#14202B">Implement</text>
+          <text x="467" y="86" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#59697A">build · tune · orchestrate</text>
+          <!-- forward arrows -->
+          <line x1="168" y1="70" x2="199" y2="70" stroke="#0F6E56" stroke-width="1.5"/>
+          <polygon points="199,66 207,70 199,74" fill="#0F6E56"/>
+          <line x1="355" y1="70" x2="386" y2="70" stroke="#0F6E56" stroke-width="1.5"/>
+          <polygon points="386,66 394,70 386,74" fill="#0F6E56"/>
+          <!-- return loop -->
+          <path d="M 467 106 C 467 182, 93 182, 93 108" fill="none" stroke="#B26414" stroke-width="1.5"/>
+          <polygon points="89,114 93,106 97,114" fill="#B26414"/>
+          <text x="280" y="176" text-anchor="middle" font-family="IBM Plex Mono" font-size="11.5" fill="#B26414">continuous — never “done”</text>
+        </svg>
+      </div>
+    </div>
+    <div class="notecap"><b>Why it matters for the ask:</b> you're not buying a project that finishes and depreciates — you're building a durable function that keeps paying back. The 14-month plan is how we stand it up.</div>
+  </section>
+
+  <!-- SLIDE 5 — ROADMAP -->
+  <section class="slide" id="s4">
+    <div class="rail"><span class="dotmark"></span><span class="code">05 · ROADMAP</span><span class="spine"></span></div>
+    <div class="eyebrow">The plan — 14 months</div>
+    <h2>Four waves, six milestones.</h2>
+    <p class="sub">Starting 27 Jul 2026, full structure in place by Sep 2027. Value lands early — a working analytics MVP in eight weeks, the first CoE iteration by November — so every commitment is proven before the next is made.</p>
+    <div class="figure">
+      <svg viewBox="0 0 980 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="14-month roadmap: four waves and six milestones from Jul 2026 to Sep 2027.">
+        <!-- axis -->
+        <line x1="170" y1="52" x2="950" y2="52" stroke="#CAD4DD" stroke-width="1"/>
+        <!-- month ticks -->
+        <g font-family="IBM Plex Mono" font-size="11" fill="#59697A" text-anchor="middle">
+          <line x1="170" y1="48" x2="170" y2="56" stroke="#CAD4DD"/><text x="170" y="40">Jul’26</text>
+          <line x1="337" y1="48" x2="337" y2="56" stroke="#CAD4DD"/><text x="337" y="40">Oct’26</text>
+          <line x1="504" y1="48" x2="504" y2="56" stroke="#CAD4DD"/><text x="504" y="40">Jan’27</text>
+          <line x1="671" y1="48" x2="671" y2="56" stroke="#CAD4DD"/><text x="671" y="40">Apr’27</text>
+          <line x1="838" y1="48" x2="838" y2="56" stroke="#CAD4DD"/><text x="838" y="40">Jul’27</text>
+          <line x1="950" y1="48" x2="950" y2="56" stroke="#CAD4DD"/><text x="944" y="40">Sep’27</text>
+        </g>
+        <!-- milestone diamonds -->
+        <g font-family="IBM Plex Mono" font-size="10" text-anchor="middle">
+          <text x="281" y="66" fill="#0F6E56">1</text><polygon points="281,72 288,79 281,86 274,79" fill="#0F6E56"/>
+          <text x="393" y="66" fill="#0F6E56">2</text><polygon points="393,72 400,79 393,86 386,79" fill="#0F6E56"/>
+          <text x="548" y="66" fill="#0F6E56">3</text><polygon points="548,72 555,79 548,86 541,79" fill="#0F6E56"/>
+          <text x="574" y="66" fill="#B26414">4</text><polygon points="574,72 581,79 574,86 567,79" fill="#B26414"/>
+          <text x="783" y="66" fill="#0F6E56">5</text><polygon points="783,72 790,79 783,86 776,79" fill="#0F6E56"/>
+          <text x="944" y="66" fill="#0F6E56">6</text><polygon points="944,72 951,79 944,86 937,79" fill="#0F6E56"/>
+        </g>
+        <!-- row labels -->
+        <g font-family="IBM Plex Mono" font-size="12" fill="#14202B">
+          <text x="20" y="118">W0 Foundations</text>
+          <text x="20" y="160">W1 Prove it</text>
+          <text x="40" y="195" fill="#B26414">↳ MVP</text>
+          <text x="20" y="230">W2 Scale &amp; govern</text>
+          <text x="20" y="270">W3 Structure complete</text>
+        </g>
+        <!-- bars -->
+        <rect x="170" y="104" width="56" height="24" rx="4" fill="#0F6E56"/>
+        <rect x="226" y="144" width="334" height="30" rx="4" fill="#0F6E56"/>
+        <rect x="226" y="182" width="55" height="16" rx="3" fill="#B26414"/>
+        <rect x="560" y="214" width="223" height="30" rx="4" fill="#0F6E56"/>
+        <rect x="783" y="254" width="167" height="30" rx="4" fill="#0F6E56"/>
+        <!-- bar labels -->
+        <g font-family="Inter" font-size="11.5" fill="#EAF0F2">
+          <text x="236" y="164">MVP · platform · CoE iteration · external-ready analytics</text>
+          <text x="570" y="234">onboarding engine · blended WFMaaS · governance</text>
+          <text x="789" y="274">hardening · full DG + DE structure</text>
+        </g>
+      </svg>
+    </div>
+    <ol class="milestones">
+      <li><span class="n">1</span><div><div class="mt">XOOS analytics MVP — Warby Parker</div><div class="md">Sep 2026</div></div></li>
+      <li><span class="n">2</span><div><div class="mt">First WFM CoE iteration</div><div class="md">Nov 2026</div></div></li>
+      <li><span class="n">3</span><div><div class="mt">XOOS analytics — external-ready</div><div class="md">Feb 2027</div></div></li>
+      <li class="hl"><span class="n">4</span><div><div class="mt">WFMaaS — blended AI + human</div><div class="md">Feb 2027</div></div></li>
+      <li><span class="n">5</span><div><div class="mt">Full XOOS onboarding engine</div><div class="md">Jun 2027</div></div></li>
+      <li><span class="n">6</span><div><div class="mt">Full Data Governance + DE structure</div><div class="md">Sep 2027</div></div></li>
+    </ol>
+    <div class="notecap"><b>Aggressively sequenced</b> by front-loading value and running the MVP lane in parallel. The tradeoff: a tight external-ready date (Feb 2027) — the highest-risk milestone, and the one most exposed to the separate XOOS team's own timeline.</div>
+  </section>
+
+  <!-- SLIDE 6 -->
+  <section class="slide" id="s5">
+    <div class="rail"><span class="dotmark"></span><span class="code">06 · THE ASK</span><span class="spine"></span></div>
+    <div class="eyebrow">Investment</div>
+    <h2>Funded as the project needs it.</h2>
+    <p class="sub">An investment that pays back through XOOS sales — no revenue target on this team. No ceiling, but spend is staged to need, so headcount only steps up as each wave earns it.</p>
+    <div class="asklayout">
+      <div class="figure" style="margin-top:6px">
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data-engineering headcount ramp from 2 today to about 10 at external-ready.">
+          <text x="0" y="18" font-family="IBM Plex Mono" font-size="12" fill="#59697A">DE headcount ramp</text>
+          <line x1="40" y1="250" x2="440" y2="250" stroke="#CAD4DD"/>
+          <!-- bars: max 10 -> scale 20px per head, base y=250 -->
+          <g>
+            <rect x="60" y="210" width="70" height="40" rx="3" fill="#CAD4DD"/>
+            <text x="95" y="200" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">2</text>
+            <text x="95" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">now</text>
+            <rect x="160" y="130" width="70" height="120" rx="3" fill="#14947A"/>
+            <text x="195" y="120" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">~6</text>
+            <text x="195" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">W1</text>
+            <rect x="260" y="90" width="70" height="160" rx="3" fill="#0F6E56"/>
+            <text x="295" y="80" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">~8</text>
+            <text x="295" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">W2</text>
+            <rect x="360" y="50" width="70" height="200" rx="3" fill="#0F6E56"/>
+            <text x="395" y="40" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">~10</text>
+            <text x="395" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">W3</text>
+          </g>
+        </svg>
+        <div class="notecap" style="margin-top:6px"><b>+ contractors</b> for the one-time bronze build (~2 FTE-years), not permanent heads.</div>
+      </div>
+      <ul class="principles">
+        <li><span class="tag">Leads</span><span class="txt"><b>Repurposed, not recruited.</b> CoE leads assigned from the existing leadership bench.</span></li>
+        <li><span class="tag">WFM</span><span class="txt"><b>No net hire.</b> Reskilled and repurposed, including blended human + AI planning.</span></li>
+        <li><span class="tag">BI</span><span class="txt"><b>Flat.</b> Same headcount, re-routed through intake as on-demand satellites.</span></li>
+        <li><span class="tag">DE</span><span class="txt"><b>The growth.</b> ~7–9 hires across the journey, staged wave by wave.</span></li>
+        <li><span class="tag">Governance</span><span class="txt"><b>Stood up from within.</b> A small, senior central function.</span></li>
+        <li><span class="tag">Build</span><span class="txt"><b>Contractors, not headcount</b>, for the bronze integration hump.</span></li>
+        <li><span class="tag">PM</span><span class="txt"><b>One project manager</b> across the whole program — prioritization, deduplication, charter, and BAU orchestration.</span></li>
+      </ul>
+    </div>
+    <div class="approve">
+      <div class="k">Approve now — enough to run Waves 0–1</div>
+      <div class="t"><b>Assign</b> the three CoE leads from the existing bench. <b>Hire</b> one project manager and 2–3 senior data engineers, and approve the <b>contractor build budget</b>. That proves the model on Warby Parker + M&amp;M and stands up the platform — before any further spend is committed.</div>
+    </div>
+  </section>
+
+</div>
+
+<nav class="nav" id="nav" aria-label="Slide navigation"></nav>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const nav=document.getElementById('nav');
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.setAttribute('aria-label','Go to slide '+(i+1));
+  b.addEventListener('click',()=>s.scrollIntoView());
+  nav.appendChild(b);
+});
+const dots=[...nav.children];
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('vis');
+      const i=slides.indexOf(e.target);
+      dots.forEach((d,j)=>d.classList.toggle('on',j===i));
+    }
+  });
+},{threshold:0.55});
+slides.forEach(s=>io.observe(s));
+
+const deck=document.getElementById('deck');
+function cur(){let idx=0,min=1e9;slides.forEach((s,i)=>{const d=Math.abs(s.getBoundingClientRect().top);if(d<min){min=d;idx=i;}});return idx;}
+window.addEventListener('keydown',(e)=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();const n=Math.min(cur()+1,slides.length-1);slides[n].scrollIntoView();}
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();const n=Math.max(cur()-1,0);slides[n].scrollIntoView();}
+});
+</script>
+</body>
+</html>
