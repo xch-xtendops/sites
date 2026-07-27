@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WFM + Data — What It Takes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{
+  --paper:#E7ECF0;--panel:#FBFCFD;--ink:#14202B;--muted:#59697A;--line:#CAD4DD;
+  --teal:#0F6E56;--teal-2:#14947A;--teal-wash:#DCEBE6;--amber:#B26414;--amber-wash:#F0E1CB;
+  --wfm:#6E56CF;--wfm-wash:#E6E1F7;
+  --display:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+.deck{scroll-snap-type:y mandatory;height:100vh;overflow-y:scroll;scroll-behavior:smooth}
+.slide{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;justify-content:center;padding:6vh clamp(28px,7vw,120px) 6vh clamp(70px,10vw,150px)}
+.rail{position:absolute;left:clamp(20px,3.2vw,44px);top:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:16px;padding:26px 0}
+.rail .spine{flex:1;width:2px;background:linear-gradient(var(--teal),var(--line))}
+.rail .code{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.rail .dotmark{width:9px;height:9px;border-radius:50%;background:var(--teal)}
+.eyebrow{font-family:var(--mono);font-size:clamp(10px,1vw,12px);letter-spacing:.24em;text-transform:uppercase;color:var(--teal);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--amber)}
+h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.015em;font-size:clamp(28px,4vw,50px)}
+.sub{font-size:clamp(14px,1.4vw,18px);line-height:1.5;color:var(--muted);max-width:64ch;margin-top:14px}
+.notecap{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:22px;display:flex;gap:10px;align-items:baseline;max-width:84ch;line-height:1.5}
+.notecap b{color:var(--ink);font-weight:500}
+
+/* two-column problem/proposal */
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:30px;max-width:1080px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:24px 24px 26px;border-top:3px solid var(--teal)}
+.panel.warn{border-top-color:var(--amber)}
+.panel h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.panel .lede{font-family:var(--display);font-size:18px;font-weight:600;margin:6px 0 4px;letter-spacing:-.01em;color:var(--ink)}
+.blist{list-style:none;display:flex;flex-direction:column;gap:11px;margin-top:16px}
+.blist li{position:relative;padding-left:20px;font-size:14px;line-height:1.45;color:var(--ink)}
+.blist li::before{content:"";position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:2px;background:var(--teal)}
+.blist.warn li::before{background:var(--amber)}
+.blist li b{font-weight:600}
+.blist li .m{color:var(--muted)}
+
+/* diagrams */
+.diagrams{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:26px;max-width:1080px}
+.dwrap{display:flex;flex-direction:column;align-items:center}
+.dwrap .dtitle{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.dwrap svg{width:100%;height:auto;max-width:460px}
+.dwrap .dcap{font-size:12.5px;color:var(--muted);margin-top:8px;text-align:center;max-width:40ch;line-height:1.45}
+
+/* areas */
+.areas{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px;max-width:1120px}
+.areas .block{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:22px 20px;border-top:3px solid var(--teal)}
+.areas .block:nth-child(2){border-top-color:var(--wfm)}
+.areas .block:nth-child(3){border-top-color:var(--amber)}
+.areas h4{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.areas .subh{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.areas .blist{gap:9px;margin-top:14px}
+.areas .blist li{font-size:13px;line-height:1.4}
+
+.nav{position:fixed;right:26px;bottom:26px;display:flex;gap:9px;z-index:20}
+.nav button{width:9px;height:9px;border-radius:50%;border:1px solid var(--muted);background:transparent;cursor:pointer;padding:0;transition:all .2s}
+.nav button.on{background:var(--teal);border-color:var(--teal);transform:scale(1.25)}
+.slide>*{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.slide.vis>*{opacity:1;transform:none}
+.slide.vis>*:nth-child(2){transition-delay:.06s}
+.slide.vis>*:nth-child(3){transition-delay:.12s}
+.slide.vis>*:nth-child(4){transition-delay:.18s}
+@media (max-width:860px){.cols2,.diagrams,.areas{grid-template-columns:1fr}.slide{padding:8vh 24px 10vh 58px}}
+@media (prefers-reduced-motion:reduce){.slide>*{opacity:1;transform:none;transition:none}html,.deck{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1 -->
+  <section class="slide" id="s0">
+    <div class="rail"><span class="dotmark"></span><span class="code">01 · GAP → PLAN</span><span class="spine"></span></div>
+    <div class="eyebrow">What it takes</div>
+    <h2>What must improve, and what we'll do.</h2>
+    <div class="cols2">
+      <div class="panel warn">
+        <h4>Required to improve</h4>
+        <div class="lede">Today's gaps</div>
+        <ul class="blist warn">
+          <li><b>Central forecasting</b> — today it's done per account, inconsistent and unscalable.</li>
+          <li><b>A consistent roster integration process</b> — standardized intake of operations rosters.</li>
+          <li><b>Consistent, timely attendance reporting</b> — reliable actuals to forecast and adhere against.</li>
+          <li><b>A real Data Engineering backbone</b> — 2 engineers and bespoke, per-account pipelines.</li>
+          <li><b>Data governance from zero</b> — no KPI definitions, MDM, quality, or ownership.</li>
+          <li><b>BI delivery discipline</b> — ad-hoc per account, no intake or reuse.</li>
+          <li><b>A multitenant Gold layer</b> to feed XOOS and external consumers reliably.</li>
+          <li><b>Clear roles</b> for a federated model — who owns what, and who develops whom.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h4>What we propose</h4>
+        <div class="lede">The move</div>
+        <ul class="blist">
+          <li>Stand up <b>two CoEs</b> — Data (Engineering + Governance) and WFM (Forecasting + Planning).</li>
+          <li><b>Federate delivery</b> — BI satellites; scheduling &amp; RTA embedded under WF POCs.</li>
+          <li>Build the platform on <b>Snowflake · dbt · Airflow</b> with tenant isolation + a governed semantic layer.</li>
+          <li><b>Reskill and repurpose</b> existing staff; hire only for the backbone (DE + a PM).</li>
+          <li>Run it as a <b>permanent tuning loop</b> — analyze → decide → implement.</li>
+          <li><b>Prove it fast</b> on an MVP (Warby Parker + M&amp;M), then scale.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 -->
+  <section class="slide" id="s1">
+    <div class="rail"><span class="dotmark"></span><span class="code">02 · MODELS</span><span class="spine"></span></div>
+    <div class="eyebrow">Operating models</div>
+    <h2>Two CoEs, one pattern.</h2>
+    <p class="sub">Each area is a centralized center of excellence at the core, with delivery and consumers arranged as satellites around it.</p>
+    <div class="diagrams">
+      <div class="dwrap">
+        <div class="dtitle">Data CoE model</div>
+        <svg viewBox="0 0 460 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data CoE at the center serving BI satellites, XOOS, and external applications.">
+          <!-- connectors -->
+          <g stroke="#CAD4DD" stroke-width="1.5">
+            <line x1="230" y1="146" x2="230" y2="96"/>
+            <line x1="300" y1="216" x2="342" y2="302"/>
+            <line x1="160" y1="216" x2="118" y2="302"/>
+          </g>
+          <!-- hub (pill) -->
+          <rect x="138" y="146" width="184" height="70" rx="35" fill="#0F6E56"/>
+          <text x="230" y="176" text-anchor="middle" font-family="Space Grotesk" font-size="17" font-weight="600" fill="#fff">Data CoE</text>
+          <text x="230" y="197" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#DCEBE6">Engineering + Governance</text>
+          <!-- BI satellite (top) -->
+          <rect x="120" y="42" width="220" height="54" rx="8" fill="#DCEBE6" stroke="#0F6E56"/>
+          <text x="230" y="64" text-anchor="middle" font-family="Space Grotesk" font-size="13.5" font-weight="600" fill="#14202B">BI satellites</text>
+          <text x="230" y="81" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#59697A">Account POCs · Support analytics</text>
+          <!-- XOOS (bottom-right) -->
+          <rect x="300" y="302" width="120" height="48" rx="8" fill="#F0E1CB" stroke="#B26414"/>
+          <text x="360" y="330" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="600" fill="#14202B">XOOS</text>
+          <!-- External apps (bottom-left) -->
+          <rect x="40" y="302" width="150" height="48" rx="8" fill="#E6E1F7" stroke="#6E56CF"/>
+          <text x="115" y="323" text-anchor="middle" font-family="Space Grotesk" font-size="13" font-weight="600" fill="#14202B">External</text>
+          <text x="115" y="339" text-anchor="middle" font-family="Space Grotesk" font-size="13" font-weight="600" fill="#14202B">applications</text>
+        </svg>
+        <div class="dcap">Centralized DE + Governance produce the platform and governed data; BI, XOOS, and external apps consume it.</div>
+      </div>
+      <div class="dwrap">
+        <div class="dtitle">WFM CoE model</div>
+        <svg viewBox="0 0 460 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WFM CoE at the center, a WFM POC reporting to it, splitting into scheduling and RTA/data harvest.">
+          <g stroke="#CAD4DD" stroke-width="1.5">
+            <line x1="230" y1="168" x2="230" y2="206"/>
+            <line x1="200" y1="254" x2="120" y2="300"/>
+            <line x1="260" y1="254" x2="345" y2="300"/>
+          </g>
+          <!-- hub (pill) -->
+          <rect x="130" y="98" width="200" height="70" rx="35" fill="#0F6E56"/>
+          <text x="230" y="128" text-anchor="middle" font-family="Space Grotesk" font-size="17" font-weight="600" fill="#fff">WFM CoE</text>
+          <text x="230" y="149" text-anchor="middle" font-family="Inter" font-size="11.5" fill="#DCEBE6">Forecasting + Planning</text>
+          <!-- WFM POC (reports to CoE) -->
+          <rect x="163" y="206" width="134" height="48" rx="8" fill="#DCEBE6" stroke="#0F6E56"/>
+          <text x="230" y="227" text-anchor="middle" font-family="Space Grotesk" font-size="13.5" font-weight="600" fill="#14202B">WFM POC</text>
+          <text x="230" y="243" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#59697A">per account</text>
+          <!-- Scheduling -->
+          <rect x="48" y="300" width="140" height="50" rx="8" fill="#DCEBE6" stroke="#0F6E56"/>
+          <text x="118" y="322" text-anchor="middle" font-family="Space Grotesk" font-size="13.5" font-weight="600" fill="#14202B">Scheduling</text>
+          <text x="118" y="338" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#59697A">edge</text>
+          <!-- RTA / Data Harvest -->
+          <rect x="272" y="300" width="156" height="50" rx="8" fill="#DCEBE6" stroke="#0F6E56"/>
+          <text x="350" y="322" text-anchor="middle" font-family="Space Grotesk" font-size="13" font-weight="600" fill="#14202B">RTA / Data Harvest</text>
+          <text x="350" y="338" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#59697A">edge</text>
+        </svg>
+        <div class="dcap">Central forecasting + planning sets the standards; a WFM POC per account runs scheduling and RTA/data-harvest at the edge.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 -->
+  <section class="slide" id="s2">
+    <div class="rail"><span class="dotmark"></span><span class="code">03 · WHAT WE NEED</span><span class="spine"></span></div>
+    <div class="eyebrow">What we need</div>
+    <h2>Asks, by area.</h2>
+    <div class="areas">
+      <div class="block">
+        <h4>Upper Management</h4>
+        <div class="subh">Authority &amp; funding</div>
+        <ul class="blist">
+          <li>Approve the staged investment and the Wave 0–1 tranche.</li>
+          <li>Mandate the CoE + federated model — the authority behind the matrix.</li>
+          <li>Sponsor alignment with the XOOS product team (the data contract).</li>
+          <li>Shield transformation capacity from BAU raids.</li>
+        </ul>
+      </div>
+      <div class="block">
+        <h4>Operations</h4>
+        <div class="subh">Access &amp; adoption</div>
+        <ul class="blist">
+          <li>Accept the matrix — WF POCs operational to CX, functional to the CoE.</li>
+          <li>Grant access to source systems + interaction data — the top schedule risk.</li>
+          <li>Commit account SME time for the MVP (Warby Parker + M&amp;M).</li>
+          <li>Adopt central forecasts and governed KPI definitions.</li>
+        </ul>
+      </div>
+      <div class="block">
+        <h4>Supporting Areas</h4>
+        <div class="subh">QA · Training · HR · Finance · IT</div>
+        <ul class="blist">
+          <li><b>QA</b> — share QA data &amp; rubrics (feeds AI QA / XOScore).</li>
+          <li><b>Training</b> — co-own reskilling paths (forecasting, analytics eng, blended).</li>
+          <li><b>HR</b> — fast-track DE + PM hiring; support role mapping.</li>
+          <li><b>Finance</b> — staged funding + contractor budget; capacity chargeback.</li>
+          <li><b>IT</b> — platform access, security/compliance, data approvals, WFM tooling.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+<nav class="nav" id="nav" aria-label="Slide navigation"></nav>
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const nav=document.getElementById('nav');
+slides.forEach((s,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Go to slide '+(i+1));b.addEventListener('click',()=>s.scrollIntoView());nav.appendChild(b);});
+const dots=[...nav.children];
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');const i=slides.indexOf(e.target);dots.forEach((d,j)=>d.classList.toggle('on',j===i));}});},{threshold:0.55});
+slides.forEach(s=>io.observe(s));
+function cur(){let idx=0,min=1e9;slides.forEach((s,i)=>{const d=Math.abs(s.getBoundingClientRect().top);if(d<min){min=d;idx=i;}});return idx;}
+window.addEventListener('keydown',(e)=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();slides[Math.min(cur()+1,slides.length-1)].scrollIntoView();}
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();slides[Math.max(cur()-1,0)].scrollIntoView();}
+});
+</script>
+</body>
+</html>

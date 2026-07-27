@@ -18,6 +18,8 @@
   --teal-wash:#DCEBE6;
   --amber:#B26414;
   --amber-wash:#F0E1CB;
+  --wfm:#6E56CF;
+  --wfm-wash:#E6E1F7;
   --display:'Space Grotesk',system-ui,sans-serif;
   --body:'Inter',system-ui,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
@@ -116,6 +118,31 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
 .milestones li.hl .n{background:var(--amber)}
 .milestones .mt{font-size:13.5px;line-height:1.35;color:var(--ink);font-weight:500}
 .milestones .md{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+
+/* parallel track */
+.eyebrow.alt{color:var(--amber)}
+.eyebrow.alt::before{background:var(--teal)}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:22px;max-width:1080px}
+.twocol h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:500}
+.divider{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--teal) 70%)}
+
+/* summary table */
+.summary{width:100%;max-width:1080px;border-collapse:collapse;margin-top:20px;font-size:13px}
+.summary th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:0 12px 9px}
+.summary thead tr{border-bottom:1px solid var(--line)}
+.summary td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink);line-height:1.35}
+.summary .date{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--muted)}
+.summary tbody td:first-child{border-left:3px solid var(--line)}
+.summary tr.de td:first-child{border-left-color:var(--teal)}
+.summary tr.wfm td:first-child{border-left-color:var(--wfm)}
+.summary tr.xo td:first-child{border-left-color:var(--amber)}
+.summary tr.prog td:first-child{border-left-color:var(--ink)}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;display:inline-block;font-weight:500;white-space:nowrap}
+.pill.de{background:var(--teal-wash);color:var(--teal)}
+.pill.wfm{background:var(--wfm-wash);color:var(--wfm)}
+.pill.xo{background:var(--amber-wash);color:var(--amber)}
+.pill.prog{background:#E1E7ED;color:var(--ink)}
+.hire{font-family:var(--mono);font-size:9.5px;background:var(--ink);color:#fff;padding:2px 7px;border-radius:10px;margin-right:7px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 
 /* progress dots */
 .nav{position:fixed;right:26px;bottom:26px;display:flex;gap:9px;z-index:20}
@@ -251,10 +278,10 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
         <div class="barrow"><span class="bar b-de-to" style="width:150px"></span><span>40 reskilled &amp; repurposed</span></div>
       </div>
       <div class="area">
-        <h3>Data <span class="count">12 → ~22 · growth in DE</span></h3>
-        <p>The growth is engineering. <span class="hl">DE goes 2 → ~10</span> to become the platform backbone. BI stays flat, re-routed as on-demand satellites + a CoE. <span class="hl">Governance stood up from zero.</span></p>
+        <h3>Data <span class="count">12 → ~22 · growth in engineering</span></h3>
+        <p>The growth is engineering. <span class="hl">8 new Data Engineers</span> take the core team from 2 to 10; one of the 10 — a current DE — <span class="hl">leads the Data CoE</span>. BI stays flat, re-routed as on-demand satellites + a CoE. <span class="hl">Governance stood up from zero.</span></p>
         <div class="barrow"><span class="bar b-de-now"></span><span>DE today · 2</span></div>
-        <div class="barrow"><span class="bar b-de-to"></span><span>DE target · ~10</span></div>
+        <div class="barrow"><span class="bar b-de-to"></span><span>DE core · 2 → 10 (8 hires)</span></div>
         <div class="barrow"><span class="bar b-bi"></span><span>BI · ~10 (flat)</span></div>
       </div>
     </div>
@@ -368,32 +395,32 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
     <p class="sub">An investment that pays back through XOOS sales — no revenue target on this team. No ceiling, but spend is staged to need, so headcount only steps up as each wave earns it.</p>
     <div class="asklayout">
       <div class="figure" style="margin-top:6px">
-        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data-engineering headcount ramp from 2 today to about 10 at external-ready.">
-          <text x="0" y="18" font-family="IBM Plex Mono" font-size="12" fill="#59697A">DE headcount ramp</text>
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Core Data Engineering team grows from 2 today to 10, via 8 new hires.">
+          <text x="0" y="18" font-family="IBM Plex Mono" font-size="12" fill="#59697A">Core DE team — grows 2 → 10</text>
           <line x1="40" y1="250" x2="440" y2="250" stroke="#CAD4DD"/>
-          <!-- bars: max 10 -> scale 20px per head, base y=250 -->
+          <!-- scale 20px per head, base y=250 -->
           <g>
             <rect x="60" y="210" width="70" height="40" rx="3" fill="#CAD4DD"/>
             <text x="95" y="200" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">2</text>
             <text x="95" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">now</text>
-            <rect x="160" y="130" width="70" height="120" rx="3" fill="#14947A"/>
-            <text x="195" y="120" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">~6</text>
+            <rect x="160" y="150" width="70" height="100" rx="3" fill="#14947A"/>
+            <text x="195" y="140" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">~5</text>
             <text x="195" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">W1</text>
             <rect x="260" y="90" width="70" height="160" rx="3" fill="#0F6E56"/>
             <text x="295" y="80" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">~8</text>
             <text x="295" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">W2</text>
             <rect x="360" y="50" width="70" height="200" rx="3" fill="#0F6E56"/>
-            <text x="395" y="40" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">~10</text>
+            <text x="395" y="40" text-anchor="middle" font-family="Space Grotesk" font-size="18" font-weight="600" fill="#14202B">10</text>
             <text x="395" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#59697A">W3</text>
           </g>
         </svg>
-        <div class="notecap" style="margin-top:6px"><b>+ contractors</b> for the one-time bronze build (~2 FTE-years), not permanent heads.</div>
+        <div class="notecap" style="margin-top:6px"><b>8 new hires</b> take the core to 10 (today's 2 DEs are part of it — one leads the CoE). The XOScore pod's <b>2 are net new</b>. Plus contractors for the one-time bronze build.</div>
       </div>
       <ul class="principles">
-        <li><span class="tag">Leads</span><span class="txt"><b>Repurposed, not recruited.</b> CoE leads assigned from the existing leadership bench.</span></li>
+        <li><span class="tag">Leads</span><span class="txt"><b>Two CoE leads — WFM + Data.</b> Repurposed, not recruited (the Data lead is a current DE).</span></li>
         <li><span class="tag">WFM</span><span class="txt"><b>No net hire.</b> Reskilled and repurposed, including blended human + AI planning.</span></li>
         <li><span class="tag">BI</span><span class="txt"><b>Flat.</b> Same headcount, re-routed through intake as on-demand satellites.</span></li>
-        <li><span class="tag">DE</span><span class="txt"><b>The growth.</b> ~7–9 hires across the journey, staged wave by wave.</span></li>
+        <li><span class="tag">DE</span><span class="txt"><b>The growth.</b> 8 new hires take the core to 10 (one of them the lead), staged wave by wave.</span></li>
         <li><span class="tag">Governance</span><span class="txt"><b>Stood up from within.</b> A small, senior central function.</span></li>
         <li><span class="tag">Build</span><span class="txt"><b>Contractors, not headcount</b>, for the bronze integration hump.</span></li>
         <li><span class="tag">PM</span><span class="txt"><b>One project manager</b> across the whole program — prioritization, deduplication, charter, and BAU orchestration.</span></li>
@@ -401,8 +428,132 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
     </div>
     <div class="approve">
       <div class="k">Approve now — enough to run Waves 0–1</div>
-      <div class="t"><b>Assign</b> the three CoE leads from the existing bench. <b>Hire</b> one project manager and 2–3 senior data engineers, and approve the <b>contractor build budget</b>. That proves the model on Warby Parker + M&amp;M and stands up the platform — before any further spend is committed.</div>
+      <div class="t"><b>Assign</b> the two CoE leads (WFM + Data) from the existing bench. <b>Hire</b> one project manager and 2–3 senior data engineers, and approve the <b>contractor build budget</b>. That proves the model on Warby Parker + M&amp;M and stands up the platform — before any further spend is committed.</div>
     </div>
+  </section>
+
+  <!-- SLIDE 7 — XOSCORE (standalone simulation) -->
+  <section class="slide" id="s6">
+    <div class="divider"></div>
+    <div class="rail"><span class="dotmark" style="background:var(--amber)"></span><span class="code">07 · XOSCORE</span><span class="spine"></span></div>
+    <div class="eyebrow alt">Parallel track — starts month +3</div>
+    <h2>XOScore: an objective experience score.</h2>
+    <p class="sub">Rates every interaction one-by-one — score, confidence, evidence, rationale — then composes a per-brand score that calibrates over time. Run by a <b>separate pod</b> from month +3 (~Oct 2026): measurement- and calibration-heavy early, DE-heavy only at the backbone — and it doesn't end. After lifecycle integration it continues in its own cadence loop, on its own milestones.</p>
+    <div class="figure">
+      <svg viewBox="0 0 980 258" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="XOScore phase timeline from Oct 2026 to Dec 2027, with four milestones.">
+        <line x1="150" y1="52" x2="950" y2="52" stroke="#CAD4DD" stroke-width="1"/>
+        <g font-family="IBM Plex Mono" font-size="11" fill="#59697A" text-anchor="middle">
+          <line x1="150" y1="48" x2="150" y2="56" stroke="#CAD4DD"/><text x="150" y="40">Oct’26</text>
+          <line x1="321" y1="48" x2="321" y2="56" stroke="#CAD4DD"/><text x="321" y="40">Jan’27</text>
+          <line x1="493" y1="48" x2="493" y2="56" stroke="#CAD4DD"/><text x="493" y="40">Apr’27</text>
+          <line x1="664" y1="48" x2="664" y2="56" stroke="#CAD4DD"/><text x="664" y="40">Jul’27</text>
+          <line x1="836" y1="48" x2="836" y2="56" stroke="#CAD4DD"/><text x="836" y="40">Oct’27</text>
+          <line x1="950" y1="48" x2="950" y2="56" stroke="#CAD4DD"/><text x="944" y="40">Dec’27</text>
+        </g>
+        <!-- phase row labels -->
+        <g font-family="IBM Plex Mono" font-size="11.5" fill="#14202B">
+          <text x="14" y="84">P0 Design &amp; gold set</text>
+          <text x="14" y="112">P1 Standalone MVP</text>
+          <text x="14" y="140">P2 Brand config</text>
+          <text x="14" y="168">P3 DE backbone</text>
+          <text x="14" y="196">P4 Lifecycle</text>
+        </g>
+        <!-- phase bars -->
+        <rect x="150" y="72" width="114" height="20" rx="3" fill="#14947A"/>
+        <rect x="264" y="100" width="172" height="20" rx="3" fill="#14947A"/>
+        <rect x="436" y="128" width="114" height="20" rx="3" fill="#14947A"/>
+        <rect x="436" y="156" width="343" height="20" rx="3" fill="#0F6E56"/>
+        <rect x="721" y="184" width="229" height="20" rx="3" fill="#0F6E56"/>
+        <!-- milestone diamonds + dates -->
+        <g font-family="IBM Plex Mono" font-size="10" text-anchor="middle" fill="#B26414">
+          <polygon points="436,214 443,221 436,228 429,221" fill="#B26414"/><text x="436" y="244">Mar’27</text>
+          <polygon points="550,214 557,221 550,228 543,221" fill="#B26414"/><text x="550" y="244">May’27</text>
+          <polygon points="779,214 786,221 779,228 772,221" fill="#B26414"/><text x="779" y="244">Aug’27</text>
+          <polygon points="944,214 951,221 944,228 937,221" fill="#B26414"/><text x="944" y="244">Dec’27</text>
+        </g>
+        <text x="150" y="242" font-family="IBM Plex Mono" font-size="10" fill="#59697A">◆ = milestone</text>
+      </svg>
+    </div>
+    <div class="notecap"><b>Dedicated DE: 1 → 1 → 2 → 2</b> (peak 2). Data science + CX SME lead the early, measurement-heavy phases — outside this DE ask. The main schedule risk is <b>data access</b> (sources, quality, approvals), not the engineering.</div>
+  </section>
+
+  <!-- SLIDE 8 — BOTH TOGETHER (combined simulation) -->
+  <section class="slide" id="s7">
+    <div class="rail"><span class="dotmark" style="background:var(--amber)"></span><span class="code">08 · TOGETHER</span><span class="spine"></span></div>
+    <div class="eyebrow alt">Running both at once</div>
+    <h2>Two tracks, one platform.</h2>
+    <p class="sub">The timelines are complementary: XOScore is DE-light while we're still building the platform, and its DE-heavy backbone phase arrives just as the platform is ready to host it. So they integrate rather than compete.</p>
+    <div class="figure">
+      <svg viewBox="0 0 980 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Both projects on one timeline with an integration window from Apr to Sep 2027.">
+        <!-- integration window -->
+        <rect x="574" y="60" width="235" height="96" rx="4" fill="#F0E1CB" opacity="0.6"/>
+        <text x="691" y="52" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#B26414">integration window</text>
+        <!-- axis -->
+        <line x1="150" y1="40" x2="950" y2="40" stroke="#CAD4DD" stroke-width="1"/>
+        <g font-family="IBM Plex Mono" font-size="10.5" fill="#59697A" text-anchor="middle">
+          <text x="150" y="32">Jul’26</text><text x="291" y="32">Oct’26</text><text x="432" y="32">Jan’27</text>
+          <text x="574" y="32">Apr’27</text><text x="715" y="32">Jul’27</text><text x="856" y="32">Oct’27</text><text x="944" y="32">Dec’27</text>
+        </g>
+        <!-- lane: main -->
+        <text x="14" y="88" font-family="IBM Plex Mono" font-size="11.5" fill="#14202B">Main build</text>
+        <rect x="150" y="76" width="659" height="24" rx="4" fill="#0F6E56"/>
+        <g stroke="#E7ECF0" stroke-width="1.5"><line x1="197" y1="76" x2="197" y2="100"/><line x1="479" y1="76" x2="479" y2="100"/><line x1="668" y1="76" x2="668" y2="100"/></g>
+        <text x="480" y="92" text-anchor="middle" font-family="Inter" font-size="11" fill="#EAF0F2">W0 · W1 · W2 · W3 → Sep’27</text>
+        <!-- lane: xoscore -->
+        <text x="14" y="148" font-family="IBM Plex Mono" font-size="11.5" fill="#B26414">XOScore</text>
+        <rect x="291" y="136" width="659" height="24" rx="4" fill="#14947A"/>
+        <g stroke="#E7ECF0" stroke-width="1.5"><line x1="432" y1="136" x2="432" y2="160"/><line x1="574" y1="136" x2="574" y2="160"/><line x1="762" y1="136" x2="762" y2="160"/></g>
+        <text x="620" y="152" text-anchor="middle" font-family="Inter" font-size="11" fill="#fff">P0 · P1 · P2 · P3 · P4 → then open-ended</text>
+        <text x="291" y="182" font-family="IBM Plex Mono" font-size="10" fill="#59697A">▲ starts month +3</text>
+      </svg>
+    </div>
+    <div class="twocol">
+      <div>
+        <h4>Integration — enrich the score</h4>
+        <ul class="principles">
+          <li><span class="tag">Ingest</span><span class="txt">Reuse the main build's bronze/silver interaction pipelines instead of new adapters.</span></li>
+          <li><span class="tag">Keys</span><span class="txt">Align to MDM/governance — customer, interaction, agent, brand, timestamp.</span></li>
+          <li><span class="tag">Calibrate</span><span class="txt">Outcome signal (CSAT / NPS / churn) from the Gold layer → learned, faster calibration.</span></li>
+          <li><span class="tag">Feed XOOS</span><span class="txt">The score becomes a Gold entity powering XOOS experience analytics.</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Combined footprint</h4>
+        <ul class="principles">
+          <li><span class="tag">Separate pod</span><span class="txt"><b>A distinct 2-person pod</b> — not added to the core team's load — sharing our platform and infra.</span></li>
+          <li><span class="tag">DE total</span><span class="txt"><b>12 engineers</b> — a 10-person core (incl. the lead, a current DE) plus the XOScore pod's 2, net new.</span></li>
+          <li><span class="tag">Leverage</span><span class="txt">Because it rides our platform, the pod needs <b>only 2</b> DEs — not the 3–4 a standalone build would.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 — MONTH-BY-MONTH SUMMARY -->
+  <section class="slide" id="s8">
+    <div class="rail"><span class="dotmark"></span><span class="code">09 · SUMMARY</span><span class="spine"></span></div>
+    <div class="eyebrow">Timeline — month by month</div>
+    <h2>Milestones and staffing, by lane.</h2>
+    <table class="summary">
+      <thead>
+        <tr><th style="width:96px">Month</th><th style="width:104px">Lane</th><th>Details</th></tr>
+      </thead>
+      <tbody>
+        <tr class="prog"><td class="date">Jul 2026</td><td><span class="pill prog">Program</span></td><td><span class="hire">Request</span>1× Project Manager (new hire). Assign 2 CoE leads — WFM + Data — repurposed, no hire.</td></tr>
+        <tr class="de"><td class="date">Jul 2026</td><td><span class="pill de">Data</span></td><td>Begin platform — Snowflake · dbt · Airflow. <span class="hire">Request</span>2–3× senior Data Engineers (platform).</td></tr>
+        <tr class="de"><td class="date">Aug 2026</td><td><span class="pill de">Data</span></td><td>MVP pipeline test — Warby Parker (~3 weeks from start). <span class="hire">Request</span>bronze-build contractors (temporary, ~2 FTE-yr).</td></tr>
+        <tr class="de"><td class="date">Sep 2026</td><td><span class="pill de">Data</span></td><td>MVP pipeline — Morgan &amp; Morgan (~3 weeks later); XOOS analytics MVP live (Warby Parker).</td></tr>
+        <tr class="xo"><td class="date">Oct 2026</td><td><span class="pill xo">XOScore</span></td><td>Pod starts (month +3). <span class="hire">Request</span>1× Data Engineer (pod, net new); data science + CX SME lead early phases (outside DE ask).</td></tr>
+        <tr class="wfm"><td class="date">Nov 2026</td><td><span class="pill wfm">WFM</span></td><td>First WFM CoE iteration — forecasting unbundled. Reskill, no hire.</td></tr>
+        <tr class="de"><td class="date">Feb 2027</td><td><span class="pill de">Data</span></td><td>XOOS analytics — external-consumption-ready. <span class="hire">Request</span>+3× Data Engineers (pipeline / analytics eng) → 8.</td></tr>
+        <tr class="wfm"><td class="date">Feb 2027</td><td><span class="pill wfm">WFM</span></td><td>WFMaaS enabled — blended AI + human planning.</td></tr>
+        <tr class="wfm"><td class="date">Apr 2027</td><td><span class="pill wfm">WFM</span></td><td>Federation live across all accounts — WF POCs + capacity tiers.</td></tr>
+        <tr class="de"><td class="date">Jun 2027</td><td><span class="pill de">Data</span></td><td>Full XOOS onboarding engine. <span class="hire">Request</span>+2× Data Engineers (reliability / DataOps) → 10.</td></tr>
+        <tr class="xo"><td class="date">Jun 2027</td><td><span class="pill xo">XOScore</span></td><td>P3 backbone. <span class="hire">Request</span>+1× Data Engineer (pod, net new) → 2.</td></tr>
+        <tr class="de"><td class="date">Sep 2027</td><td><span class="pill de">Data</span></td><td>Data Governance + full DE structure in place (10-person core, incl. the CoE lead).</td></tr>
+        <tr class="xo"><td class="date">Dec 2027</td><td><span class="pill xo">XOScore</span></td><td>Lifecycle integration (P4) → then open-ended.</td></tr>
+      </tbody>
+    </table>
+    <div class="notecap"><span class="hire">Request</span> marks a new hire or contractor ask. <b>WFM adds no headcount</b> — reskill and repurpose only. Core DE: 10 incl. the lead (8 new hires + today's 2). XOScore pod: 2, net new. Plus 1 PM → <b>12 engineers total</b>.</div>
   </section>
 
 </div>

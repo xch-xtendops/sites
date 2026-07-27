@@ -10,11 +10,11 @@ Target operating model: a shared **center (CoE)** + a **federated delivery edge*
 **Staffing stance for this stage**
 - **WFM:** no hiring, no downsizing — reskill and repurpose only *for this stage*. Mandate now spans **human + AI (blended) capacity planning** (see Decisions locked), so reskilling extends into AI-capacity modeling; specialized hires may follow in a later stage.
 - **BI:** roughly flat headcount; sized by the workload model, not cut. Ad-hoc account demand and per-account product builds remain; what changes is routing (intake → satellite/pod).
-- **Leadership:** CoE leads are **repurposed from the existing bench** (Director, Managers/Assoc, Data Analysis Leads) — assigned, not recruited.
+- **Leadership:** **two CoE leads — 1 WFM CoE lead + 1 Data CoE lead.** The WFM lead is repurposed from the WFM bench; the **Data lead is a current DE** (one of the 10-person core, covering DE + Governance + BI).
 - **DE:** the one function that grows. Firmed sizing and ramp in `W1-E2`.
 - **Program:** **1 Project Manager — net-new hire** across the whole program: prioritization, deduplication, project-charter optimization, and BAU orchestration. Needed from Wave 0.
 
-> **Net-new permanent headcount = data engineers (~7–9) + 1 PM.** Everything else — CoE leads, WFM, BI, Governance — is repurpose/reskill. Bronze build is contractors (temporary).
+> **Net-new permanent headcount = 8 Data Engineer hires + 2 for the XOScore pod (net new) + 1 PM.** The core DE team lands at **10** (today's 2 DEs are part of it — one becomes the Data CoE lead — plus 8 new hires). WFM, BI, and Governance are repurpose/reskill. Bronze build is contractors (temporary). Total engineers: **12** (10 core + 2 pod).
 
 ---
 
@@ -66,10 +66,9 @@ Milestone: target org, roles, and reporting lines approved.
 
 ### W0-E2 — CoE leads named
 Milestone: the three centers have owners.
-- [ ] Appoint WFM Planning & Forecasting CoE lead
-- [ ] Appoint Data Governance lead
-- [ ] Appoint DE Platform lead
-- [ ] Assign the three CoE leads from the existing bench (Director / Managers / Data Analysis Leads)
+- [ ] Assign the WFM CoE lead (Forecasting + Planning)
+- [ ] Assign the Data CoE lead (DE + Governance + BI)
+- [ ] Both repurposed from the existing bench (Director / Managers / Data Analysis Leads) — not recruited
 - [ ] Hire the program Project Manager — net-new (prioritization, dedup, charter, BAU orchestration)
 - [ ] Confirm area head (Director) and demand/capacity-management owner (candidate: current Assoc Manager)
 
@@ -133,7 +132,7 @@ Four lanes:
 - **Analytics engineering / Gold** — silver → gold, XOOS contract, BI marts, KPI customization. Scales with data products/entities: **~1–2** start → **~3**, held down by the semantic layer (`W1-E6`).
 - **Reliability / DataOps** — monitoring, on-call, incident. **~2** by Wave 3, split across regions (follow-the-sun is a real cost driver from your footprint), zero before then.
 
-**Ramp:** 2 today → **~5–6** in W1 (platform 2 + pipeline 3 + AE 1, with the MVP lane running parallel) → **~8** by W2 → **~9–11** at external-ready. Net new: ~7–9 hires across the journey.
+**Ramp:** 2 today → **~5** in W1 → **~8** by W2 → **10** at external-ready. **8 new hires**; today's 2 DEs are part of the 10 (one becomes the Data CoE lead). The XOScore pod's **2 are net new**, on top.
 **Immediate defensible ask:** **+2–3 senior, platform-weighted, now** (your 2 DEs can't hold BAU *and* build the foundation; seniors set the patterns that make every later hire productive — hire pipeline-juniors first and they'll build one-offs you rip out).
 **Bronze hump (contractor-covered — decided):** the ~75 bespoke bronze builds are roughly a **2-FTE-year one-time hump** in W1–W2, staffed with **contractors** rather than permanent heads so you don't over-staff for a build that ends.
 
@@ -256,3 +255,47 @@ Milestone: the ring-fence is real, not a slide.
 
 ## Still open / noted dependencies
 - [ ] **No centralized WFM platform today** — may need to buy or build. Out of scope for this plan, but a hard dependency for WFM delivery at scale; flag to whoever owns tooling budget.
+
+---
+---
+
+# ═ Parallel track — XOScore ═
+
+*A separate side project, run simultaneously with the main plan. Kept as its own simulation: its own timeline and resources, with defined integration points where it can ride the main build rather than duplicate it.*
+
+**What it is:** an objective experience score (XOScore) computed by evaluating interactions **one by one, non-aggregated**, over any interaction source. Two decoupled layers — **Measurement** (AI rates each interaction: score + confidence + evidence + rationale; reusable across brands) and **Aggregation** (dimension scores → composite XOScore, **configurable per brand**, calibrated over time). Early phases are measurement/calibration-heavy (data science + CX SME); DE effort concentrates in the backbone.
+
+**Start:** month **+3 (~Oct 2026)**. Run by a **separate pod** (finding efficiencies via the shared platform/infra, but not folded into the core DE ramp). Runs standalone first, integrating with the main build wherever the timeline allows, then **open-ended** — after P4 it continues in its own analyze → decide → implement cadence, on **milestones tracked separately** from the XOOS / WFM / BI / DE timeline.
+
+## XOScore simulation — timeline & DE
+
+| Phase | Goal | DE deliverable | Dedicated DEs | Milestone (anchored) |
+|---|---|---|---|---|
+| P0 | Measurement design & gold set | Canonical interaction schema; sample extraction | 0–1 (light) | — |
+| P1 | Standalone MVP (score one-by-one, vs. gold set) | 2–3 source adapters; versioned score store | 1 | Validated scores · **~Mar 2027** |
+| P2 | Aggregation & brand config | Config/weight store; outcome-data joins for calibration | 1 | Brand-configurable · **~May 2027** |
+| P3 | DE backbone (productionize) | Batch + streaming ingestion, connectors, orchestration, observability/drift, re-scoring, cost governance | 2 | Production backbone · **~Aug 2027** |
+| P4 | Lifecycle integration | Join-ready keys; lifecycle data pipelines | 2 | Full lifecycle · **~Dec 2027** |
+
+- **Dedicated DE ramp: 1 → 1 → 2 → 2 (strict peak 2).** If platform/backend + MLOps are filed under DE, standalone peak is 3–4 — **avoided by integration** (see below).
+- P3 can run ~50% in parallel with P1–P2; P4 depends on external lifecycle data.
+
+## Integration points — enrich the score (and XOOS)
+- [ ] **Shared interaction ingestion** — reuse the main build's bronze/silver pipelines instead of building new source adapters.
+- [ ] **Join-ready keys via MDM/governance** — align customer / interaction / agent / brand / timestamp to the main semantic layer *before* any join exists.
+- [ ] **Outcome signal for calibration** — CSAT / NPS / churn / resolution from the Gold layer, so P2 weights are *learned*, not hand-tuned (faster).
+- [ ] **XOScore → XOOS** — the per-interaction/per-brand score becomes a Gold entity feeding XOOS experience analytics (caps #1 monitor, #5 classic-vs-AI).
+
+## Running both simultaneously
+- **Separate pod, shared platform:** 2 dedicated DEs as a distinct team — not added to the core DE ramp — reusing the platform, orchestration, and drift monitoring the main build stands up.
+- **Complementary by design:** XOScore is DE-light exactly while the main platform is still being built; its DE-heavy backbone (P3) lands *after* the platform is ready to host it — so no contention.
+- **Combined DE footprint:** core 10 + XOScore pod 2 (net new) = **12 total** (mid–late 2027).
+- **Integration leverage:** because the pod rides our platform, it needs only its **2 DEs** — not the standalone 3–4.
+- **Open-ended:** P4 is not a finish line. After lifecycle integration, XOScore continues in its own cadence loop, with its own milestone track separate from the general timeline.
+- **Extends past the main plan** into 2027 and beyond, with P4 gated on external lifecycle data.
+
+## XOScore-specific risks & rules
+- **Data access is the main schedule driver** (sources, quality, approval lead time) — not the engineering.
+- Treat interaction data as **PII from P1**, not a P3 afterthought.
+- **Version every scored record** with `rubric_version`, `model_version`, `prompt_version`.
+- Plan a **re-scoring strategy** for rubric changes (scores aren't comparable across rubric versions).
