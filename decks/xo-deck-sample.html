@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WFM &amp; Data — Transformation Readout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   XO AI BPO — brand tokens. Do not add colors or change values.
+   ============================================================ */
+:root{
+  --xo-black:#181818;      --xo-off-white:#ecf1f3;
+  --xo-blue:#307cfc;       --xo-dark-blue:#204bee;
+  --xo-purple:#845eee;     --xo-yellow:#ffd364;
+  --xo-orange:#e9a23c;     --xo-light-green:#a9f2d5;
+  --xo-green:#55b685;      --xo-pink:#d95597;
+
+  /* 16:9 type scale — derived from the 900x600 template, x1.2 */
+  --t-hero:72px; --t-title:64px; --t-subhead-lg:32px; --t-subhead:28px;
+  --t-subhead-sm:24px; --t-body:20px; --t-caption:16px;
+
+  --gutter:56px; --col-gap:28px; --fit:1;
+}
+
+/* Background variants. Each carries its own accent set — accents are
+   paired to the background in this brand, never mixed across variants. */
+.s-dark{
+  --bg:var(--xo-black); --fg:var(--xo-off-white);
+  --accent:var(--xo-orange); --accent-alt:var(--xo-light-green); --rule:var(--xo-green);
+}
+.s-light{
+  --bg:var(--xo-off-white); --fg:var(--xo-black);
+  --accent:var(--xo-purple); --accent-alt:var(--xo-dark-blue); --rule:var(--xo-pink);
+}
+/* Optional second accent set per variant, for variety across a long deck. */
+.s-dark.acc-b{  --accent:var(--xo-light-green); --accent-alt:var(--xo-orange);    --rule:var(--xo-blue); }
+.s-light.acc-b{ --accent:var(--xo-dark-blue);   --accent-alt:var(--xo-blue);      --rule:var(--xo-green); }
+
+/* ---------- shell ---------- */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0d0d0d; padding:24px 0;
+  font-family:"Inter","Inter var",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.stage{
+  width:calc(1280px * var(--fit)); height:calc(720px * var(--fit));
+  margin:0 auto 24px;
+}
+.slide{
+  width:1280px; height:720px; overflow:hidden; position:relative;
+  transform:scale(var(--fit)); transform-origin:top left;
+  background:var(--bg); color:var(--fg);
+  padding:var(--gutter);
+  display:flex; flex-direction:column;
+  print-color-adjust:exact; -webkit-print-color-adjust:exact;
+}
+
+/* ---------- type components ---------- */
+.eyebrow{
+  font-size:var(--t-subhead-sm); font-weight:700; color:var(--accent);
+  text-transform:uppercase; letter-spacing:.10em;
+}
+.eyebrow .num{ font-weight:900; margin-right:.6em; }
+
+.hero{ font-size:var(--t-hero); font-weight:700; line-height:1.02; letter-spacing:-.02em; }
+.title{ font-size:var(--t-title); font-weight:700; line-height:1.06; letter-spacing:-.015em; }
+.subhead{ font-size:var(--t-subhead-lg); font-weight:700; line-height:1.15; }
+.lede{ font-size:var(--t-subhead); font-weight:400; line-height:1.35; }
+.body{ font-size:var(--t-body); font-weight:400; line-height:1.5; }
+.caption{ font-size:var(--t-caption); font-weight:400; line-height:1.45; opacity:.78; }
+.label{ font-size:var(--t-caption); font-weight:600; text-transform:uppercase; letter-spacing:.08em; }
+
+/* The signature move: a headline in two colors. Use on one or two words. */
+.hl{ color:var(--accent); }
+.hl-alt{ color:var(--accent-alt); }
+
+/* color:inherit clears the UA stylesheet's `hr { color: gray }` */
+.rule{ height:3px; background:var(--rule); border:0; color:inherit; width:120px; }
+.rule-full{ height:2px; background:var(--rule); border:0; color:inherit; width:100%; opacity:.55; }
+
+.dot{
+  width:80px; height:80px; border-radius:50%;
+  background:var(--xo-yellow); color:var(--xo-black);
+  display:flex; align-items:center; justify-content:center;
+  font-size:32px; font-weight:900; flex:none;
+}
+
+.stat{ font-size:var(--t-hero); font-weight:900; line-height:1; color:var(--accent); }
+
+/* ---------- layouts ---------- */
+
+/* Cover / closing statement */
+.l-hero{ justify-content:center; gap:28px; }
+.l-hero .hero{ max-width:15ch; }
+.l-hero .meta{ display:flex; gap:32px; align-items:baseline; }
+
+/* Numbered section with a three-column body */
+.l-columns{ gap:20px; }
+/* Put max-width on the type element itself, never on a wrapper — `ch`
+   resolves against the element's own font-size, so a wrapper at 16px
+   would collapse a 64px title into a very narrow column. */
+.l-columns .head{ display:flex; flex-direction:column; gap:14px; }
+.l-columns .head .title{ max-width:18ch; }
+.l-columns .head .lede{ max-width:44ch; }
+.l-columns .cols{
+  margin-top:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--col-gap);
+}
+.l-columns .col{ display:flex; flex-direction:column; gap:10px; }
+
+/* Icon row — three or four points, each with a yellow marker */
+.l-icons{ gap:24px; }
+.l-icons .head{ display:flex; justify-content:space-between; align-items:flex-end; gap:48px; }
+.l-icons .head .title{ max-width:16ch; }
+.l-icons .head .lede{ max-width:30ch; }
+.l-icons .points{
+  margin-top:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--col-gap);
+}
+.l-icons .point{ display:flex; flex-direction:column; gap:14px; }
+
+/* Announcement — one big headline, prose beneath, contact line at the foot */
+.l-announce{ gap:24px; }
+.l-announce .hero{ max-width:20ch; }
+.l-announce .prose{ display:flex; flex-direction:column; gap:16px; max-width:62ch; }
+.l-announce .foot{ margin-top:auto; display:flex; justify-content:space-between; align-items:flex-end; }
+
+/* Two-up split — text left, visual or callout right */
+.l-split{ display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center; }
+.l-split .col{ display:flex; flex-direction:column; gap:18px; }
+.l-split .panel{
+  align-self:stretch; border-radius:20px; background:var(--accent-alt);
+  color:var(--xo-black); padding:40px; display:flex; flex-direction:column;
+  justify-content:center; gap:14px;
+}
+
+/* Metric row */
+.l-metrics{ gap:28px; }
+.l-metrics .grid{ margin-top:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--col-gap); }
+.l-metrics .cell{ display:flex; flex-direction:column; gap:8px; }
+
+/* Slot for a single image or 3D asset. One per slide, never more. */
+.figure{
+  border-radius:20px; overflow:hidden;
+  background:color-mix(in srgb, var(--fg) 12%, transparent);
+  display:flex; align-items:center; justify-content:center;
+}
+.figure img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* ---------- print / PDF ---------- */
+@page{ size:1280px 720px; margin:0; }
+@media print{
+  body{ background:#fff; padding:0; }
+  .stage{ width:1280px; height:720px; margin:0; page-break-after:always; break-after:page; }
+  .stage:last-child{ page-break-after:auto; break-after:auto; }
+  .slide{ transform:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage"><section class="slide s-dark l-hero">
+  <p class="eyebrow">Workforce Management &amp; Data</p>
+  <h1 class="hero">One team, <span class="hl">two speeds</span>.</h1>
+  <div class="meta"><span class="label">Transformation readout</span><span class="caption">July 2026</span></div>
+</section></div>
+
+<div class="stage"><section class="slide s-light l-columns">
+  <div class="head">
+    <p class="eyebrow"><span class="num">01</span>Operating model</p>
+    <h2 class="title">A center of excellence with a <span class="hl">federated edge</span>.</h2>
+    <p class="lede">Standards are set once, centrally. Delivery stays close to the account.</p>
+  </div>
+  <div class="cols">
+    <div class="col"><hr class="rule"><p class="label">Center</p><p class="caption">Owns forecasting method, data contracts, and the scoring engine.</p></div>
+    <div class="col"><hr class="rule"><p class="label">Edge</p><p class="caption">Embedded analysts who answer to the account and inherit the standard.</p></div>
+    <div class="col"><hr class="rule"><p class="label">Platform</p><p class="caption">XOOS carries both, so a tenant gets the same rigor on day one.</p></div>
+  </div>
+</section></div>
+
+<div class="stage"><section class="slide s-dark l-icons">
+  <div class="head">
+    <h2 class="title">Staged over <span class="hl">14 months</span>.</h2>
+    <p class="lede">Each stage ships something usable before the next one starts.</p>
+  </div>
+  <hr class="rule-full">
+  <div class="points">
+    <div class="point"><div class="dot">1</div><p class="subhead">Centralize sources</p><p class="caption">Minimum viable data set, one definition per metric.</p></div>
+    <div class="point"><div class="dot">2</div><p class="subhead">Daily operations</p><p class="caption">An MVP dashboard the floor actually opens each morning.</p></div>
+    <div class="point"><div class="dot">3</div><p class="subhead">Per-client framework</p><p class="caption">Config-driven, with access control and insights that name an action.</p></div>
+  </div>
+</section></div>
+
+<div class="stage"><section class="slide s-light acc-b l-metrics">
+  <p class="eyebrow"><span class="num">02</span>MVP scope</p>
+  <h2 class="title">Two accounts <span class="hl">first</span>.</h2>
+  <div class="grid">
+    <div class="cell"><p class="stat">2</p><hr class="rule"><p class="label">MVP accounts</p><p class="caption">Warby Parker and Morgan &amp; Morgan.</p></div>
+    <div class="cell"><p class="stat">3</p><hr class="rule"><p class="label">Capacity tiers</p><p class="caption">Sized to real billable hours, not an eight-hour assumption.</p></div>
+    <div class="cell"><p class="stat">14</p><hr class="rule"><p class="label">Months to full rollout</p><p class="caption">Through September 2027.</p></div>
+  </div>
+</section></div>
+
+<script>
+/* Scale slides to fit the viewport; print resets to 1:1. */
+(function(){
+  var fit=function(){
+    var s=Math.min(1,(window.innerWidth-48)/1280);
+    document.documentElement.style.setProperty('--fit',s);
+  };
+  window.addEventListener('resize',fit); fit();
+})();
+</script>
+</body>
+</html>
