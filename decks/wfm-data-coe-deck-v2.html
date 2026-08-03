@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WFM + Data — Plan v2 (response to feedback)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{
+  --paper:#E7ECF0;--panel:#FBFCFD;--ink:#14202B;--muted:#59697A;--line:#CAD4DD;
+  --teal:#0F6E56;--teal-2:#14947A;--teal-wash:#DCEBE6;--amber:#B26414;--amber-wash:#F0E1CB;
+  --wfm:#6E56CF;--wfm-wash:#E6E1F7;
+  --display:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+.deck{scroll-snap-type:y mandatory;height:100vh;overflow-y:scroll;scroll-behavior:smooth}
+.slide{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;justify-content:center;padding:5.5vh clamp(28px,6vw,110px) 5.5vh clamp(70px,9vw,140px)}
+.rail{position:absolute;left:clamp(20px,3.2vw,44px);top:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:16px;padding:26px 0}
+.rail .spine{flex:1;width:2px;background:linear-gradient(var(--teal),var(--line))}
+.rail .code{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.rail .dotmark{width:9px;height:9px;border-radius:50%;background:var(--teal)}
+.eyebrow{font-family:var(--mono);font-size:clamp(10px,1vw,12px);letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--amber)}
+.eyebrow.alt{color:var(--amber)}
+.eyebrow.alt::before{background:var(--teal)}
+h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.015em;font-size:clamp(26px,3.6vw,46px)}
+.sub{font-size:clamp(13px,1.35vw,17px);line-height:1.5;color:var(--muted);max-width:66ch;margin-top:12px}
+.notecap{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:18px;display:flex;gap:10px;align-items:baseline;max-width:96ch;line-height:1.5}
+.notecap b{color:var(--ink);font-weight:500}
+
+/* tables */
+.rtable{width:100%;border-collapse:collapse;margin-top:16px;max-width:1160px;font-size:12.5px}
+.rtable th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:0 12px 8px}
+.rtable thead tr{border-bottom:1px solid var(--line)}
+.rtable td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.34}
+.rtable td.a{color:var(--muted);border-left:3px solid var(--amber);width:40%}
+.rtable td.b{color:var(--ink)}
+.rtable.change td.a{border-left-color:var(--line);width:42%}
+.rtable.change td.b{border-left:3px solid var(--teal);padding-left:12px}
+.rtable.change td.b b{color:var(--teal);font-weight:600}
+
+/* columns / panels */
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px;max-width:1120px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:22px;border-top:3px solid var(--teal)}
+.panel.v{border-top-color:var(--wfm)}
+.panel h4{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.panel .subh{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.blist{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.blist li{position:relative;padding-left:18px;font-size:13px;line-height:1.42;color:var(--ink)}
+.blist li::before{content:"";position:absolute;left:2px;top:7px;width:6px;height:6px;border-radius:2px;background:var(--teal)}
+.blist li b{font-weight:600}
+.outnote{margin-top:14px;font-size:12px;line-height:1.45;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px}
+.outnote b{color:var(--amber);font-weight:600}
+
+/* accounts chips */
+.phases{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px;max-width:1120px}
+.phase{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:18px 20px}
+.phase.p1{border-left:4px solid var(--teal)}
+.phase.p2{border-left:4px solid var(--muted)}
+.phase h4{font-family:var(--display);font-size:16px;font-weight:600}
+.phase .when{font-family:var(--mono);font-size:11px;color:var(--teal);margin-left:8px}
+.phase.p2 .when{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{font-size:12px;background:var(--teal-wash);color:var(--ink);padding:4px 10px;border-radius:14px}
+.phase.p2 .chip{background:#E1E7ED;color:var(--muted)}
+
+/* milestones */
+.milestones{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 22px;margin-top:18px;max-width:1120px}
+.milestones li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
+.milestones .n{font-family:var(--mono);font-size:11px;font-weight:500;color:#fff;background:var(--teal);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.milestones li.hl .n{background:var(--amber)}
+.milestones .mt{font-size:13px;line-height:1.3;color:var(--ink);font-weight:500}
+.milestones .md{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:2px}
+
+.figure{margin-top:18px;width:100%;max-width:1040px}
+.figure svg{width:100%;height:auto;display:block}
+.hire{font-family:var(--mono);font-size:9.5px;background:var(--ink);color:#fff;padding:2px 7px;border-radius:10px;margin-right:7px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+
+.nav{position:fixed;right:26px;bottom:26px;display:flex;gap:9px;z-index:20}
+.nav button{width:9px;height:9px;border-radius:50%;border:1px solid var(--muted);background:transparent;cursor:pointer;padding:0;transition:all .2s}
+.nav button.on{background:var(--teal);border-color:var(--teal);transform:scale(1.25)}
+.slide>*{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+.slide.vis>*{opacity:1;transform:none}
+.slide.vis>*:nth-child(2){transition-delay:.05s}.slide.vis>*:nth-child(3){transition-delay:.1s}.slide.vis>*:nth-child(4){transition-delay:.15s}
+@media (max-width:880px){.cols2,.phases,.milestones{grid-template-columns:1fr}.slide{padding:7vh 22px 9vh 56px}}
+@media (prefers-reduced-motion:reduce){.slide>*{opacity:1;transform:none;transition:none}html,.deck{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1 — TL;DR -->
+  <section class="slide" id="s0">
+    <div class="rail"><span class="dotmark"></span><span class="code">01 · TL;DR</span><span class="spine"></span></div>
+    <div class="eyebrow">Feedback &amp; response</div>
+    <h2>Mike's notes, and how we're responding.</h2>
+    <table class="rtable">
+      <thead><tr><th>Mike's note</th><th>Our response</th></tr></thead>
+      <tbody>
+        <tr><td class="a">Move faster; all Phase-1 accounts live in XOOS by end of 2026</td><td class="b">Yes — 6 accounts on a standard KPI layer by Dec 2026 (breadth). DE hiring pulled earlier. Depth deepens through 2027.</td></tr>
+        <tr><td class="a">Re-cut the roadmap account-by-account</td><td class="b">Done — Phase 1 (6 accounts, EOY26) + Phase 2 (10 accounts, 2027).</td></tr>
+        <tr><td class="a">Define the analytics MVP — KPIs or comprehensive?</td><td class="b">EOY26 MVP = core operational KPIs on one standard template ×6. Comprehensive / per-brand is a 2027 deepening.</td></tr>
+        <tr><td class="a">Customer-journey analytics, full funnel</td><td class="b">Two tiers: service-journey on 2–3 accounts by Q1'27 (our interaction data); full funnel gated on client upstream data, later 2027.</td></tr>
+        <tr><td class="a">Internal data too (finance / HR / TA)?</td><td class="b">On the 2027 roadmap, with a big <b>IF</b> — if backend progress is respected, initial integration by Q2'27, full integration by Q4'27.</td></tr>
+        <tr><td class="a">Break down the 10-DE capacity</td><td class="b">Added — accounts-per-DE, what ownership means, and BAU-vs-build load (see Hiring).</td></tr>
+        <tr><td class="a">Add Business Reviews + AI performance analytics</td><td class="b">Both on the roadmap, mid–late 2027. AI ROI composes XOScore + QA + blended-capacity data we're already building.</td></tr>
+        <tr><td class="a">Build a WFM automation tool that cuts WFM HC</td><td class="b">Scoped as a separate Planning &amp; Forecasting CoE project + a sellable product. HC impact framed as ratio improvement, not cuts (we reskill current staff).</td></tr>
+        <tr><td class="a">VoC as a third track</td><td class="b">Genuinely a third pod — scoped separately with its own timeline &amp; headcount. Decision pending (see VoC slide).</td></tr>
+        <tr><td class="a">XOScore faster than Dec 2027</td><td class="b">Agreed in principle — ~12-month track, Warby on XOScore by EOY26. But the timeline must be <b>synced with Gio (Product Eng)</b> — the lift is heavier on his side than on DE. Open: scoring-criteria ownership + data-access contingency.</td></tr>
+      </tbody>
+    </table>
+    <div class="notecap"><b>Overall:</b> accelerate the front (early value, EOY26 breadth); hold the back (external-ready, governance, depth) on a realistic arc — bespoke bronze integration and DE onboarding are the binding constraints.</div>
+  </section>
+
+  <!-- SLIDE 2 — MVP DEFINED -->
+  <section class="slide" id="s1">
+    <div class="rail"><span class="dotmark"></span><span class="code">02 · MVP</span><span class="spine"></span></div>
+    <div class="eyebrow">What "live by EOY26" means</div>
+    <h2>The Dec-2026 MVP, defined.</h2>
+    <p class="sub">Deliberately thin and standardized so it works across six accounts at once: breadth now, depth in 2027. Here's exactly what's in — and out — on each side.</p>
+    <div class="cols2">
+      <div class="panel">
+        <h4>Data backend</h4>
+        <div class="subh">Pipelines &amp; platform</div>
+        <ul class="blist">
+          <li>Connectors for a <b>minimum viable set of sources</b> per account (interaction + ops data).</li>
+          <li>Medallion on <b>Snowflake · dbt · Airflow</b>: bespoke bronze per source → templated silver → curated Gold KPI marts.</li>
+          <li><b>Governed, standard KPI definitions</b> applied identically across all 6 accounts.</li>
+          <li><b>Join-ready keys</b> — customer · interaction · agent · brand · timestamp.</li>
+          <li>Daily batch refresh, orchestration, basic monitoring; account partitioning for isolation.</li>
+        </ul>
+        <div class="outnote"><b>Not in the MVP:</b> streaming, full security/compliance hardening, re-scoring infra, per-brand custom models, and the <b>employee lifecycle model</b>.</div>
+      </div>
+      <div class="panel v">
+        <h4>Data frontend</h4>
+        <div class="subh">What lands in XOOS</div>
+        <ul class="blist">
+          <li><b>One standard daily operational dashboard</b> template, applied per account.</li>
+          <li>Core operational KPIs — volume, service level, AHT, occupancy, adherence/shrinkage, resolution — in a consistent layout.</li>
+          <li><b>Account-scoped access</b> (RBAC groundwork: each tenant sees only its own).</li>
+          <li>Date / channel / queue filters and trend lines.</li>
+          <li>Consistent enough to onboard the next account by configuration, not rebuild.</li>
+        </ul>
+        <div class="outnote"><b>Not in the MVP:</b> journey/funnel views, AI-performance dashboards, the business-review builder, deep per-brand customization, self-serve config.</div>
+      </div>
+    </div>
+    <div class="notecap"><b>Boundary:</b> XOOS's own app (its database, frontend, backend) is a separate team — our "frontend" is the Gold-layer data contract + the dashboard spec it renders.</div>
+  </section>
+
+  <!-- SLIDE 3 — ROADMAP / PHASING -->
+  <section class="slide" id="s2">
+    <div class="rail"><span class="dotmark"></span><span class="code">03 · ROADMAP</span><span class="spine"></span></div>
+    <div class="eyebrow">Account phasing &amp; dates</div>
+    <h2>Phase by account, not by wave.</h2>
+    <div class="phases">
+      <div class="phase p1"><h4>Phase 1 <span class="when">live by Dec 2026</span></h4>
+        <div class="chips"><span class="chip">Warby Parker</span><span class="chip">Sonrava Health</span><span class="chip">Blackacre</span><span class="chip">J.Crew</span><span class="chip">Condé Nast</span><span class="chip">Morgan &amp; Morgan</span><span class="chip">+ new AI-agent accounts</span></div>
+      </div>
+      <div class="phase p2"><h4>Phase 2 <span class="when">through 2027</span></h4>
+        <div class="chips"><span class="chip">NBA</span><span class="chip">Valeris</span><span class="chip">Quadlock</span><span class="chip">Flare</span><span class="chip">Trim by One Main</span><span class="chip">Logitech</span><span class="chip">Within Health</span><span class="chip">Flex Marketing</span><span class="chip">Uplifting Results Lab</span><span class="chip">Kandu Health</span></div>
+      </div>
+    </div>
+    <ol class="milestones">
+      <li><span class="n">1</span><div><div class="mt">First analytics MVP — Warby Parker</div><div class="md">Sep 2026</div></div></li>
+      <li class="hl"><span class="n">2</span><div><div class="mt">6 Phase-1 accounts live — standard KPI layer</div><div class="md">Dec 2026</div></div></li>
+      <li><span class="n">3</span><div><div class="mt">Journey analytics — Tier 1, 2–3 accounts</div><div class="md">Q1 2027</div></div></li>
+      <li><span class="n">4</span><div><div class="mt">WFMaaS enabled — blended AI + human</div><div class="md">Feb 2027</div></div></li>
+      <li><span class="n">5</span><div><div class="mt">AI ROI analytics + XOOS onboarding engine</div><div class="md">Jun 2027</div></div></li>
+      <li><span class="n">6</span><div><div class="mt">Governance + full DE structure; Business Reviews</div><div class="md">Q3–Q4 2027</div></div></li>
+    </ol>
+    <div class="notecap"><b>Front fast, back realistic:</b> Phase-1 breadth by EOY26; external-ready hardening, governance, and analytics depth hold on the ~14-month arc.</div>
+  </section>
+
+  <!-- SLIDE 4 — HIRING -->
+  <section class="slide" id="s3">
+    <div class="rail"><span class="dotmark"></span><span class="code">04 · HIRING</span><span class="spine"></span></div>
+    <div class="eyebrow">DE capacity, pulled left</div>
+    <h2>Onboard earlier to hit EOY26.</h2>
+    <p class="sub">Six accounts by December can't wait for a Feb–Jun hiring wave. Senior platform DEs start now; pipeline DEs and bronze contractors land in Q4 2026.</p>
+    <div class="cols2" style="align-items:start">
+      <div class="figure" style="margin-top:6px">
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Front-loaded DE ramp: 2 today to about 7 by end of 2026, 10 by mid 2027.">
+          <text x="0" y="16" font-family="IBM Plex Mono" font-size="12" fill="#59697A">Core DE — front-loaded</text>
+          <line x1="40" y1="250" x2="440" y2="250" stroke="#CAD4DD"/>
+          <rect x="60" y="210" width="70" height="40" rx="3" fill="#CAD4DD"/>
+          <text x="95" y="200" text-anchor="middle" font-family="Space Grotesk" font-size="17" font-weight="600" fill="#14202B">2</text>
+          <text x="95" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#59697A">now</text>
+          <rect x="160" y="110" width="70" height="140" rx="3" fill="#14947A"/>
+          <text x="195" y="100" text-anchor="middle" font-family="Space Grotesk" font-size="17" font-weight="600" fill="#14202B">~7</text>
+          <text x="195" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#59697A">EOY26</text>
+          <rect x="260" y="70" width="70" height="180" rx="3" fill="#0F6E56"/>
+          <text x="295" y="60" text-anchor="middle" font-family="Space Grotesk" font-size="17" font-weight="600" fill="#14202B">~9</text>
+          <text x="295" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#59697A">Q1’27</text>
+          <rect x="360" y="50" width="70" height="200" rx="3" fill="#0F6E56"/>
+          <text x="395" y="40" text-anchor="middle" font-family="Space Grotesk" font-size="17" font-weight="600" fill="#14202B">10</text>
+          <text x="395" y="270" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#59697A">mid’27</text>
+        </svg>
+      </div>
+      <div>
+        <ul class="blist">
+          <li><b>Jul:</b> 2–3 senior platform DEs + the PM; bronze contractors start August.</li>
+          <li><b>Sep–Oct:</b> 3–4 pipeline DEs (pulled left from Feb) → ~7 building 6 pipelines in parallel through Q4.</li>
+          <li><b>Accounts per DE:</b> ~1 DE per 4–6 accounts at steady state; fewer during greenfield build.</li>
+          <li><b>Ownership</b> = build + monitor + maintain the account's pipelines and Gold entities.</li>
+          <li><b>BAU vs build:</b> once live, maintenance is a fraction of build — freeing capacity for Phase 2 and new tenants.</li>
+        </ul>
+        <div class="outnote"><b>The honest caveat:</b> onboarding 4–5 DEs to productivity in one quarter is aggressive and raises spend earlier; new hires ramp before they're fully productive.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — WFM -->
+  <section class="slide" id="s4">
+    <div class="rail"><span class="dotmark"></span><span class="code">05 · WFM</span><span class="spine"></span></div>
+    <div class="eyebrow">Planning &amp; Forecasting CoE</div>
+    <h2>The CoE — plus an automation tool.</h2>
+    <p class="sub">The WFM CoE stands up as planned (reskill, blended human + AI planning), and we add a scoped build inside its development: a forecasting / scheduling / capacity-planning tool — usable internally and sellable in XOOS.</p>
+    <div class="cols2">
+      <div class="panel">
+        <h4>WFM CoE development</h4>
+        <div class="subh">Reskill + build</div>
+        <ul class="blist">
+          <li>Central Forecasting &amp; Planning; scheduling + RTA embedded per account under a WFM POC.</li>
+          <li>Reskill current staff (flat headcount) into central forecasting and <b>blended human + AI</b> capacity planning.</li>
+          <li><b>New: a WFM automation tool</b> — forecasting, scheduling, capacity planning — as a scoped P&amp;F project, then a product surfaced in XOOS.</li>
+          <li>WFMaaS (blended) enabled Feb 2027; the tool matures across 2027.</li>
+        </ul>
+      </div>
+      <div class="panel v">
+        <h4>Headcount effect</h4>
+        <div class="subh">Ratio improvement, not cuts</div>
+        <ul class="blist">
+          <li>ROI shows up as <b>WFM coverage scaling sub-linearly</b> as agent and account headcount grow.</li>
+          <li>The win is <b>avoided future hiring</b> — absorbing growth without proportional WFM growth.</li>
+          <li><b>No current cuts, no backfill skip</b> — we reskill existing staff to guarantee operational continuity.</li>
+          <li>Becomes a <b>sellable product</b> — clients get automated planning inside XOOS.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notecap"><b>Scope note:</b> this is the WFM-platform dependency we flagged, now elevated to a funded, scoped build within the CoE — with its own timeline to define.</div>
+  </section>
+
+  <!-- SLIDE 6 — TIMELINE (Gantt) -->
+  <section class="slide" id="s4b">
+    <div class="rail"><span class="dotmark"></span><span class="code">06 · TIMELINE</span><span class="spine"></span></div>
+    <div class="eyebrow">The plan on one axis</div>
+    <h2>Timeline — Jul 2026 to Q4 2027.</h2>
+    <div class="figure">
+      <svg viewBox="0 0 980 352" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gantt of the plan across tracks from July 2026 to December 2027.">
+        <g stroke="#CAD4DD" stroke-width="1" opacity="0.5">
+          <line x1="210" y1="54" x2="210" y2="326"/><line x1="342" y1="54" x2="342" y2="326"/><line x1="475" y1="54" x2="475" y2="326"/><line x1="607" y1="54" x2="607" y2="326"/><line x1="739" y1="54" x2="739" y2="326"/><line x1="871" y1="54" x2="871" y2="326"/><line x1="960" y1="54" x2="960" y2="326"/>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="10.5" fill="#59697A" text-anchor="middle">
+          <text x="210" y="46">Jul’26</text><text x="342" y="46">Oct’26</text><text x="475" y="46">Jan’27</text><text x="607" y="46">Apr’27</text><text x="739" y="46">Jul’27</text><text x="871" y="46">Oct’27</text><text x="960" y="46">Dec’27</text>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="10.5" fill="#14202B">
+          <text x="14" y="79">DE platform + hiring</text>
+          <text x="14" y="113">Phase 1 (KPI MVP)</text>
+          <text x="14" y="147">Phase 2 accounts</text>
+          <text x="14" y="181">Analytics depth</text>
+          <text x="14" y="215">WFM CoE + tool</text>
+          <text x="14" y="249">Governance / ext-ready</text>
+          <text x="14" y="283">XOScore pod</text>
+          <text x="14" y="317">Internal data (IF)</text>
+        </g>
+        <rect x="210" y="66" width="617" height="18" rx="3" fill="#0F6E56"/>
+        <text x="220" y="79" font-family="Inter" font-size="10.5" fill="#EAF0F2">Platform · pipelines · hiring 2 → 10</text>
+        <rect x="254" y="100" width="176" height="18" rx="3" fill="#0F6E56"/>
+        <text x="262" y="113" font-family="Inter" font-size="10" fill="#EAF0F2">6 accts · KPI MVP</text>
+        <polygon points="430,100 438,109 430,118 422,109" fill="#B26414"/>
+        <text x="446" y="113" font-family="IBM Plex Mono" font-size="9.5" fill="#B26414">6 live</text>
+        <rect x="475" y="134" width="485" height="18" rx="3" fill="#14947A"/>
+        <text x="484" y="147" font-family="Inter" font-size="10.5" fill="#EAF0F2">onboard through 2027</text>
+        <rect x="475" y="168" width="485" height="18" rx="3" fill="#0F6E56"/>
+        <text x="484" y="181" font-family="Inter" font-size="10.5" fill="#EAF0F2">Journey T1 · AI ROI · Business Reviews</text>
+        <rect x="210" y="202" width="750" height="18" rx="3" fill="#6E56CF"/>
+        <text x="220" y="215" font-family="Inter" font-size="10.5" fill="#EAF0F2">CoE · WFMaaS · automation tool</text>
+        <polygon points="519,202 527,211 519,220 511,211" fill="#F0E1CB" stroke="#B26414"/>
+        <rect x="519" y="236" width="308" height="18" rx="3" fill="#0F6E56"/>
+        <text x="527" y="249" font-family="Inter" font-size="10.5" fill="#EAF0F2">governance + external-ready</text>
+        <rect x="342" y="270" width="618" height="18" rx="3" fill="#F0E1CB" stroke="#B26414" stroke-dasharray="5 3"/>
+        <text x="350" y="283" font-family="Inter" font-size="10.5" fill="#14202B">pod — pending Gio (Product Eng) sync</text>
+        <rect x="607" y="304" width="353" height="18" rx="3" fill="#F0E1CB" stroke="#B26414" stroke-dasharray="5 3"/>
+        <text x="615" y="317" font-family="Inter" font-size="10.5" fill="#14202B">IF backend holds: Q2 → Q4 ’27</text>
+      </svg>
+    </div>
+    <div class="notecap"><b>Teal</b> = Data / DE · <b>violet</b> = WFM · <b>dashed amber</b> = pending or conditional. The Dec 2026 marker is the six-account go-live; XOScore and internal data both carry external dependencies.</div>
+  </section>
+
+  <!-- SLIDE 7 — NEW DELIVERABLES -->
+  <section class="slide" id="s5">
+    <div class="rail"><span class="dotmark"></span><span class="code">07 · NEW</span><span class="spine"></span></div>
+    <div class="eyebrow">Added to the roadmap</div>
+    <h2>Three additions, sequenced on what exists.</h2>
+    <div class="cols2" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="panel">
+        <h4>AI ROI analytics</h4>
+        <div class="subh">Mid–late 2027</div>
+        <ul class="blist">
+          <li>Client-facing view of AI performance: containment, resolution, sentiment, human-vs-AI.</li>
+          <li><b>Composed from existing tracks</b> — XOScore, QA automation, blended-capacity economics.</li>
+          <li>Not net-new plumbing — an assembly layer over data we already build.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h4>Business Reviews</h4>
+        <div class="subh">Late 2027</div>
+        <ul class="blist">
+          <li>Turn analytics into a presentation built and delivered inside XOOS.</li>
+          <li>Sits <b>on top of the analytics layer</b> — so it follows once that layer exists.</li>
+        </ul>
+      </div>
+      <div class="panel v">
+        <h4>Journey analytics</h4>
+        <div class="subh">Tiered</div>
+        <ul class="blist">
+          <li><b>Tier 1 (Q1'27):</b> service journey on 2–3 accounts — contact reason → routing → AI/human → resolution → repeat — from our interaction data.</li>
+          <li><b>Tier 2 (later '27):</b> full discovery→loyalty funnel — <b>gated on client upstream data</b> (e-commerce / CRM).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notecap"><b>Why tiered journeys:</b> our BPO data covers the service leg; the full funnel needs the client's own upstream data — which turns the ask into leverage to push data-sharing.</div>
+  </section>
+
+  <!-- SLIDE 7 — VOC (second to last) -->
+  <section class="slide" id="s6">
+    <div class="rail"><span class="dotmark" style="background:var(--amber)"></span><span class="code">08 · VOC</span><span class="spine"></span></div>
+    <div class="eyebrow alt">Proposed third track — decision pending</div>
+    <h2>Voice of Customer: what it would take.</h2>
+    <p class="sub">A Perplexity-style, per-account interface that surfaces trends and topics from customer conversations. Real value — but it's a third parallel track, not a feature to fold into the current ask.</p>
+    <div class="cols2">
+      <div class="panel v">
+        <h4>What it would mean</h4>
+        <ul class="blist">
+          <li><b>Its own pod</b> — like XOScore: separate headcount, timeline, and ownership.</li>
+          <li>New pipelines: conversation ingestion across channels, transcription, PII handling, topic modeling, embeddings.</li>
+          <li>A <b>RAG / search + LLM layer</b> over the conversation corpus, per account.</li>
+          <li>Shares the platform and join-ready keys (some reuse from XOScore's interaction ingestion).</li>
+          <li>Depends on conversation-data access &amp; quality — the recurring gating risk.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h4>If we start October 2026</h4>
+        <ul class="blist">
+          <li><b>Oct–Dec '26:</b> data access + conversation ingestion, transcription &amp; normalization.</li>
+          <li><b>Q1 '27:</b> topic/trend surfacing MVP on 1–2 accounts.</li>
+          <li><b>Q2 '27:</b> the query UI (Perplexity-style) MVP; broaden accounts.</li>
+          <li><b>H2 '27:</b> production, more accounts, tie-in with XOScore/journey.</li>
+          <li><b>~9–12 months</b> to a solid product — contingent on a dedicated pod + data access.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notecap"><b>The decision:</b> worth doing, but it needs its own pod and budget. Absorbing it silently would double the parallel-work load — so it's a yes/no on funding a third track, not a roadmap footnote.</div>
+  </section>
+
+  <!-- SLIDE 8 — CHANGELOG (last) -->
+  <section class="slide" id="s7">
+    <div class="rail"><span class="dotmark"></span><span class="code">09 · CHANGES</span><span class="spine"></span></div>
+    <div class="eyebrow">Version diff</div>
+    <h2>What changed in this version.</h2>
+    <table class="rtable change">
+      <thead><tr><th>Previous</th><th>New (this version)</th></tr></thead>
+      <tbody>
+        <tr><td class="a">Roadmap organized by wave (W0–W3)</td><td class="b">Organized <b>by account phase</b> — Phase 1 (6 by EOY26) / Phase 2 (2027)</td></tr>
+        <tr><td class="a">Analytics MVP = Warby Parker + M&amp;M slice</td><td class="b"><b>6 Phase-1 accounts</b> on a standard KPI layer by Dec 2026 (breadth; depth in 2027)</td></tr>
+        <tr><td class="a">DE hiring staged, big adds in Feb / Jun '27</td><td class="b"><b>Front-loaded</b> — ~7 core DEs by EOY26, 10 by mid-2027</td></tr>
+        <tr><td class="a">XOScore full track to Dec 2027</td><td class="b"><b>~12-month track; Warby live on XOScore by EOY26</b></td></tr>
+        <tr><td class="a">WFM = CoE + reskill only</td><td class="b">+ a <b>WFM automation tool</b> (P&amp;F project + sellable); HC framed as ratio improvement</td></tr>
+        <tr><td class="a">No journey / AI-ROI / business-review features</td><td class="b">Added: <b>AI ROI analytics, Business Reviews, Journey analytics</b> (Tier 1 by Q1'27)</td></tr>
+        <tr><td class="a">VoC not in the plan</td><td class="b">Proposed as a <b>third track</b> — own pod, ~9–12 mo from Oct; decision pending</td></tr>
+        <tr><td class="a">~14-month single arc</td><td class="b"><b>Accelerated front</b> (EOY26 value) with the back half held on the realistic arc</td></tr>
+      </tbody>
+    </table>
+    <div class="notecap"><b>Net:</b> faster to first value and broader by EOY26, honest on full completion — same binding constraints (bronze integration, DE onboarding) drive both.</div>
+  </section>
+
+</div>
+<nav class="nav" id="nav" aria-label="Slide navigation"></nav>
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const nav=document.getElementById('nav');
+slides.forEach((s,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Go to slide '+(i+1));b.addEventListener('click',()=>s.scrollIntoView());nav.appendChild(b);});
+const dots=[...nav.children];
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');const i=slides.indexOf(e.target);dots.forEach((d,j)=>d.classList.toggle('on',j===i));}});},{threshold:0.5});
+slides.forEach(s=>io.observe(s));
+function cur(){let idx=0,min=1e9;slides.forEach((s,i)=>{const d=Math.abs(s.getBoundingClientRect().top);if(d<min){min=d;idx=i;}});return idx;}
+window.addEventListener('keydown',(e)=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();slides[Math.min(cur()+1,slides.length-1)].scrollIntoView();}
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();slides[Math.max(cur()-1,0)].scrollIntoView();}
+});
+</script>
+</body>
+</html>
