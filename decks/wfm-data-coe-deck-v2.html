@@ -95,7 +95,7 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
   <section class="slide" id="s0">
     <div class="rail"><span class="dotmark"></span><span class="code">01 · TL;DR</span><span class="spine"></span></div>
     <div class="eyebrow">Feedback &amp; response</div>
-    <h2>Your feedback, and how we're responding.</h2>
+    <h2>Update to the plan after initial feedback</h2>
     <table class="rtable">
       <thead><tr><th>Your note</th><th>Our response</th></tr></thead>
       <tbody>
@@ -104,7 +104,7 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
         <tr><td class="a">Define the analytics MVP — KPIs or comprehensive?</td><td class="b">EOY26 MVP = core operational KPIs on one standard template ×6. Comprehensive / per-brand is a 2027 deepening.</td></tr>
         <tr><td class="a">Customer-journey analytics, full funnel</td><td class="b">Two tiers: service-journey on 2–3 accounts by Q1'27 (our interaction data); full funnel gated on client upstream data, later 2027.</td></tr>
         <tr><td class="a">Internal data too (finance / HR / TA)?</td><td class="b">On the 2027 roadmap, with a big <b>IF</b> — if backend progress is respected, initial integration by Q2'27, full integration by Q4'27.</td></tr>
-        <tr><td class="a">Break down the 10-DE capacity</td><td class="b">Added — accounts-per-DE, what ownership means, and BAU-vs-build load (see Hiring).</td></tr>
+        <tr><td class="a">Break down the 10-DE capacity</td><td class="b">Added a bottom-up breakdown — the 10 = platform + pipeline + analytics + reliability, with accounts-per-DE and BAU-vs-build (see "Why 10").</td></tr>
         <tr><td class="a">Add Business Reviews + AI performance analytics</td><td class="b">Both on the roadmap, mid–late 2027. AI ROI composes XOScore + QA + blended-capacity data we're already building.</td></tr>
         <tr><td class="a">Build a WFM automation tool that cuts WFM HC</td><td class="b">Scoped as a separate Planning &amp; Forecasting CoE project + a sellable product. HC impact framed as ratio improvement, not cuts (we reskill current staff).</td></tr>
         <tr><td class="a">VoC as a third track</td><td class="b">Genuinely a third pod — scoped separately with its own timeline &amp; headcount. Decision pending (see VoC slide).</td></tr>
@@ -211,9 +211,63 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
     </div>
   </section>
 
-  <!-- SLIDE 5 — WFM -->
+  <!-- SLIDE 5 — WHY 10 -->
+  <section class="slide" id="s3b">
+    <div class="rail"><span class="dotmark"></span><span class="code">05 · WHY 10</span><span class="spine"></span></div>
+    <div class="eyebrow">DE capacity, bottom-up</div>
+    <h2>Why ten engineers — it's the sum of the work.</h2>
+    <p class="sub">Not a target we're staffing to — four distinct workloads added up, and only two of them grow with accounts.</p>
+    <div class="figure">
+      <svg viewBox="0 0 980 116" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ten engineers as four workloads: platform 2, pipeline 3-4, analytics 2-3, reliability 1-2.">
+        <text x="40" y="14" font-family="IBM Plex Mono" font-size="11" fill="#59697A">The 10 = four workloads (only pipeline + analytics grow with accounts)</text>
+        <rect x="40" y="26" width="190" height="44" rx="3" fill="#0F6E56"/>
+        <rect x="232" y="26" width="330" height="44" rx="3" fill="#14947A"/>
+        <rect x="564" y="26" width="235" height="44" rx="3" fill="#4FA98F"/>
+        <rect x="801" y="26" width="139" height="44" rx="3" fill="#B26414"/>
+        <g font-family="Space Grotesk" font-weight="600" text-anchor="middle">
+          <text x="135" y="53" font-size="15" fill="#EAF0F2">~2</text>
+          <text x="397" y="53" font-size="15" fill="#EAF0F2">~3–4</text>
+          <text x="681" y="53" font-size="15" fill="#14202B">~2–3</text>
+          <text x="870" y="53" font-size="15" fill="#EAF0F2">~1–2</text>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="10.5" fill="#14202B" text-anchor="middle">
+          <text x="135" y="92">Platform core</text>
+          <text x="397" y="92">Pipeline eng</text>
+          <text x="681" y="92">Analytics eng</text>
+          <text x="870" y="92">Reliability</text>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="9.5" fill="#59697A" text-anchor="middle">
+          <text x="135" y="106">fixed</text>
+          <text x="397" y="106">accounts × sources</text>
+          <text x="681" y="106">data products</text>
+          <text x="870" y="106">once live</text>
+        </g>
+      </svg>
+    </div>
+    <div class="cols2">
+      <div class="panel">
+        <h4>How the capacity works</h4>
+        <ul class="blist">
+          <li><b>Accounts per DE</b> (ownership = build + monitor + maintain that account's pipelines and Gold entities): during build ~1 DE per 3–4 accounts; once live (BAU) ~1 per 4–6.</li>
+          <li><b>BAU vs. build:</b> once an account is live, maintenance runs ~20–30% of the build effort.</li>
+          <li>So as the Phase-1 six shift to BAU, that freed capacity absorbs Phase-2 onboarding — the team scales <b>sub-linearly</b> with accounts.</li>
+        </ul>
+      </div>
+      <div class="panel v">
+        <h4>Why not fewer — or more</h4>
+        <ul class="blist">
+          <li><b>Not fewer:</b> platform (2) is non-negotiable foundation; bronze is irreducibly bespoke and gates the EOY26 six; reliability isn't optional once we're external and follow-the-sun.</li>
+          <li><b>Not more:</b> templating (~55% silver→gold) + the semantic layer cap analytics growth; cheap BAU means live accounts don't each need a DE; contractors cover the build spike.</li>
+          <li><b>Separate:</b> the 2 XOScore-pod engineers are not in the 10.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notecap"><b>In one line:</b> sized to build six accounts in parallel by EOY26, then absorb Phase 2 as those accounts drop to low-cost maintenance — not one DE per account.</div>
+  </section>
+
+  <!-- SLIDE 6 — WFM -->
   <section class="slide" id="s4">
-    <div class="rail"><span class="dotmark"></span><span class="code">05 · WFM</span><span class="spine"></span></div>
+    <div class="rail"><span class="dotmark"></span><span class="code">06 · WFM</span><span class="spine"></span></div>
     <div class="eyebrow">Planning &amp; Forecasting CoE</div>
     <h2>The CoE — plus an automation tool.</h2>
     <p class="sub">The WFM CoE stands up as planned (reskill, blended human + AI planning), and we add a scoped build inside its development: a forecasting / scheduling / capacity-planning tool — usable internally and sellable in XOOS.</p>
@@ -244,7 +298,7 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
 
   <!-- SLIDE 6 — TIMELINE (Gantt) -->
   <section class="slide" id="s4b">
-    <div class="rail"><span class="dotmark"></span><span class="code">06 · TIMELINE</span><span class="spine"></span></div>
+    <div class="rail"><span class="dotmark"></span><span class="code">07 · TIMELINE</span><span class="spine"></span></div>
     <div class="eyebrow">The plan on one axis</div>
     <h2>Timeline — Jul 2026 to Q4 2027.</h2>
     <div class="figure">
@@ -291,7 +345,7 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
 
   <!-- SLIDE 7 — NEW DELIVERABLES -->
   <section class="slide" id="s5">
-    <div class="rail"><span class="dotmark"></span><span class="code">07 · NEW</span><span class="spine"></span></div>
+    <div class="rail"><span class="dotmark"></span><span class="code">08 · NEW</span><span class="spine"></span></div>
     <div class="eyebrow">Added to the roadmap</div>
     <h2>Three additions, sequenced on what exists.</h2>
     <div class="cols2" style="grid-template-columns:1fr 1fr 1fr">
@@ -326,7 +380,7 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
 
   <!-- SLIDE 7 — VOC (second to last) -->
   <section class="slide" id="s6">
-    <div class="rail"><span class="dotmark" style="background:var(--amber)"></span><span class="code">08 · VOC</span><span class="spine"></span></div>
+    <div class="rail"><span class="dotmark" style="background:var(--amber)"></span><span class="code">09 · VOC</span><span class="spine"></span></div>
     <div class="eyebrow alt">Proposed third track — decision pending</div>
     <h2>Voice of Customer: what it would take.</h2>
     <p class="sub">A Perplexity-style, per-account interface that surfaces trends and topics from customer conversations. Real value — but it's a third parallel track, not a feature to fold into the current ask.</p>
@@ -357,7 +411,7 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
 
   <!-- SLIDE 8 — CHANGELOG (last) -->
   <section class="slide" id="s7">
-    <div class="rail"><span class="dotmark"></span><span class="code">09 · CHANGES</span><span class="spine"></span></div>
+    <div class="rail"><span class="dotmark"></span><span class="code">10 · CHANGES</span><span class="spine"></span></div>
     <div class="eyebrow">Version diff</div>
     <h2>What changed in this version.</h2>
     <table class="rtable change">
@@ -366,6 +420,7 @@ h2{font-family:var(--display);font-weight:600;line-height:1.04;letter-spacing:-.
         <tr><td class="a">Roadmap organized by wave (W0–W3)</td><td class="b">Organized <b>by account phase</b> — Phase 1 (6 by EOY26) / Phase 2 (2027)</td></tr>
         <tr><td class="a">Analytics MVP = Warby Parker + M&amp;M slice</td><td class="b"><b>6 Phase-1 accounts</b> on a standard KPI layer by Dec 2026 (breadth; depth in 2027)</td></tr>
         <tr><td class="a">DE hiring staged, big adds in Feb / Jun '27</td><td class="b"><b>Front-loaded</b> — ~7 core DEs by EOY26, 10 by mid-2027</td></tr>
+        <tr><td class="a">10 DEs presented as a headcount</td><td class="b"><b>Justified bottom-up</b> — four workloads, accounts-per-DE, BAU-vs-build (new slide)</td></tr>
         <tr><td class="a">XOScore full track to Dec 2027</td><td class="b"><b>~12-month track; Warby live on XOScore by EOY26</b></td></tr>
         <tr><td class="a">WFM = CoE + reskill only</td><td class="b">+ a <b>WFM automation tool</b> (P&amp;F project + sellable); HC framed as ratio improvement</td></tr>
         <tr><td class="a">No journey / AI-ROI / business-review features</td><td class="b">Added: <b>AI ROI analytics, Business Reviews, Journey analytics</b> (Tier 1 by Q1'27)</td></tr>
