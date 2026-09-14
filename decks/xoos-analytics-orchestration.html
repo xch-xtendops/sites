@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XOOS Analytics — Orchestrating Unified Decision-Making</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --xo-black:#181818;      --xo-off-white:#ecf1f3;
+  --xo-blue:#307cfc;       --xo-dark-blue:#204bee;
+  --xo-purple:#845eee;     --xo-yellow:#ffd364;
+  --xo-orange:#e9a23c;     --xo-light-green:#a9f2d5;
+  --xo-green:#55b685;      --xo-pink:#d95597;
+
+  --t-hero:72px; --t-title:64px; --t-subhead-lg:32px; --t-subhead:28px;
+  --t-subhead-sm:24px; --t-body:20px; --t-caption:16px;
+
+  --gutter:56px; --col-gap:28px; --fit:1;
+}
+
+.s-dark{  --bg:var(--xo-black);     --fg:var(--xo-off-white); }
+.s-light{ --bg:var(--xo-off-white); --fg:var(--xo-black); }
+
+.s-dark.a-amber{   --accent:var(--xo-orange);      --accent-alt:var(--xo-light-green); --rule:var(--xo-orange);    --panel-fg:var(--xo-black); }
+.s-dark.a-mint{    --accent:var(--xo-light-green); --accent-alt:var(--xo-green);       --rule:var(--xo-green);     --panel-fg:var(--xo-black); }
+.s-dark.a-azure{   --accent:var(--xo-blue);        --accent-alt:var(--xo-blue);        --rule:var(--xo-blue);      --panel-fg:var(--xo-off-white); }
+.s-light.a-violet{ --accent:var(--xo-purple);      --accent-alt:var(--xo-purple);      --rule:var(--xo-pink);      --panel-fg:var(--xo-off-white); }
+.s-light.a-indigo{ --accent:var(--xo-dark-blue);   --accent-alt:var(--xo-dark-blue);   --rule:var(--xo-green);     --panel-fg:var(--xo-off-white); }
+.s-light.a-azure{  --accent:var(--xo-blue);        --accent-alt:var(--xo-blue);        --rule:var(--xo-blue);      --panel-fg:var(--xo-off-white); }
+
+.s-dark{  --accent:var(--xo-orange); --accent-alt:var(--xo-light-green); --rule:var(--xo-orange); --panel-fg:var(--xo-black); }
+.s-light{ --accent:var(--xo-purple); --accent-alt:var(--xo-purple);      --rule:var(--xo-pink);   --panel-fg:var(--xo-off-white); }
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0d0d0d; padding:24px 0;
+  font-family:"Inter","Inter var",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.stage{
+  width:calc(1280px * var(--fit)); height:calc(720px * var(--fit));
+  margin:0 auto 24px;
+}
+.slide{
+  width:1280px; height:720px; overflow:hidden; position:relative;
+  transform:scale(var(--fit)); transform-origin:top left;
+  background:var(--bg); color:var(--fg);
+  padding:var(--gutter);
+  display:flex; flex-direction:column;
+  print-color-adjust:exact; -webkit-print-color-adjust:exact;
+}
+
+.eyebrow{
+  font-size:var(--t-subhead-sm); font-weight:700; color:var(--accent);
+  text-transform:uppercase; letter-spacing:.10em;
+}
+.eyebrow .num{ font-weight:900; margin-right:.6em; }
+
+.hero{ font-size:var(--t-hero); font-weight:700; line-height:1.02; letter-spacing:-.02em; }
+.title{ font-size:var(--t-title); font-weight:700; line-height:1.06; letter-spacing:-.015em; }
+.subhead{ font-size:var(--t-subhead-lg); font-weight:700; line-height:1.15; }
+.lede{ font-size:var(--t-subhead); font-weight:400; line-height:1.35; }
+.body{ font-size:var(--t-body); font-weight:400; line-height:1.5; }
+.caption{ font-size:var(--t-caption); font-weight:400; line-height:1.45; opacity:.78; }
+.label{ font-size:var(--t-caption); font-weight:600; text-transform:uppercase; letter-spacing:.08em; }
+
+.hl{ color:var(--accent); }
+.hl-alt{ color:var(--accent-alt); }
+
+.rule{ height:3px; background:var(--rule); border:0; color:inherit; width:120px; }
+.rule-full{ height:2px; background:var(--rule); border:0; color:inherit; width:100%; opacity:.55; }
+
+.dot{
+  width:80px; height:80px; border-radius:50%;
+  background:var(--xo-yellow); color:var(--xo-black);
+  display:flex; align-items:center; justify-content:center;
+  font-size:32px; font-weight:900; flex:none;
+}
+
+.stat{ font-size:var(--t-hero); font-weight:900; line-height:1; color:var(--accent); }
+
+.l-hero{ justify-content:center; gap:28px; }
+.l-hero .hero{ max-width:15ch; }
+.l-hero .meta{ display:flex; gap:32px; align-items:baseline; }
+
+.l-columns{ gap:20px; }
+.l-columns .head{ display:flex; flex-direction:column; gap:14px; }
+.l-columns .head .title{ max-width:18ch; }
+.l-columns .head .lede{ max-width:44ch; }
+.l-columns .cols{
+  margin-top:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--col-gap);
+}
+.l-columns .col{ display:flex; flex-direction:column; gap:10px; }
+
+.l-icons{ gap:24px; }
+.l-icons .head{ display:flex; justify-content:space-between; align-items:flex-end; gap:48px; }
+.l-icons .head .title{ max-width:16ch; }
+.l-icons .head .lede{ max-width:30ch; }
+.l-icons .points{
+  margin-top:auto; display:grid; grid-template-columns:repeat(4,1fr); gap:var(--col-gap);
+}
+.l-icons .point{ display:flex; flex-direction:column; gap:14px; }
+
+.l-announce{ gap:24px; }
+.l-announce .hero{ max-width:20ch; }
+.l-announce .prose{ display:flex; flex-direction:column; gap:16px; max-width:62ch; }
+.l-announce .foot{ margin-top:auto; display:flex; justify-content:space-between; align-items:flex-end; }
+
+.l-split{ display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center; }
+.l-split .col{ display:flex; flex-direction:column; gap:18px; }
+.l-split .panel{
+  align-self:stretch; border-radius:20px; background:var(--accent-alt);
+  color:var(--panel-fg); padding:40px; display:flex; flex-direction:column;
+  justify-content:center; gap:14px;
+}
+
+.l-metrics{ gap:28px; }
+.l-metrics .grid{ margin-top:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:var(--col-gap); }
+.l-metrics .cell{ display:flex; flex-direction:column; gap:8px; }
+
+.icon{ width:72px; height:72px; object-fit:contain; display:block; }
+.element{ width:100%; max-width:340px; height:auto; display:block; }
+
+.figure{
+  border-radius:20px; overflow:hidden;
+  background:color-mix(in srgb, var(--fg) 12%, transparent);
+  display:flex; align-items:center; justify-content:center;
+}
+.figure img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+@page{ size:1280px 720px; margin:0; }
+@media print{
+  body{ background:#fff; padding:0; }
+  .stage{ width:1280px; height:720px; margin:0; page-break-after:always; break-after:page; }
+  .stage:last-child{ page-break-after:auto; break-after:auto; }
+  .slide{ transform:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. Summary + Backbone ============ -->
+<div class="stage"><section class="slide s-dark a-mint l-announce">
+  <h1 class="hero">XOOS Analytics: <span class="hl">Unified Decisions</span></h1>
+  <div class="prose">
+    <p class="body">Four core features—Performance, Business Review, Financial Analysis, AI Metrics—backed by a foundation layer of governance, medallion pipelines, and MCP-powered insights.</p>
+    <p class="body">Today we organize ownership, use cases, and initial priorities across tool creation and supporting data infrastructure.</p>
+  </div>
+  <div class="foot">
+    <p class="caption">XOOS Analytics | Directive Leaders Orchestration</p>
+    <hr class="rule">
+  </div>
+</section></div>
+
+<!-- ============ 2. Performance ============ -->
+<div class="stage"><section class="slide s-light a-indigo l-split">
+  <div class="col">
+    <p class="eyebrow"><span class="num">01</span>Performance</p>
+    <h2 class="title">Account health at a <span class="hl">glance</span>.</h2>
+    <p class="body"><strong>Owner:</strong> [Ops Leader]</p>
+    <p class="body"><strong>Experience:</strong> Summary → Trends → Aggregations → Agent Detail</p>
+    <p class="body"><strong>Decisions:</strong> Alert triggers, coaching, escalations</p>
+  </div>
+  <div class="panel">
+    <p class="label">Priority</p>
+    <p class="subhead">Proposed P1</p>
+    <p class="caption">Foundation—already in UAT.</p>
+  </div>
+</section></div>
+
+<!-- ============ 3. Business Review ============ -->
+<div class="stage"><section class="slide s-dark a-amber l-split">
+  <div class="col">
+    <p class="eyebrow"><span class="num">02</span>Business Review</p>
+    <h2 class="title">Data stories for <span class="hl">clients</span>.</h2>
+    <p class="body"><strong>Owner:</strong> [Ops / Client Success Lead]</p>
+    <p class="body"><strong>Experience:</strong> LLM-powered narrative + auto-deck via MCP skill</p>
+    <p class="body"><strong>Decisions:</strong> Client comms, ROI proof, account reviews</p>
+  </div>
+  <div class="panel">
+    <p class="label">Priority</p>
+    <p class="subhead">Proposed P1</p>
+    <p class="caption">Depends on data completeness.</p>
+  </div>
+</section></div>
+
+<!-- ============ 4. Financial Analysis ============ -->
+<div class="stage"><section class="slide s-light a-azure l-split">
+  <div class="col">
+    <p class="eyebrow"><span class="num">03</span>Financial Analysis</p>
+    <h2 class="title">Margin, cost, and <span class="hl">viability</span>.</h2>
+    <p class="body"><strong>Owner:</strong> [Finance / CFO]</p>
+    <p class="body"><strong>Experience:</strong> B2P, costs, margins (via medallion finance pipeline)</p>
+    <p class="body"><strong>Decisions:</strong> Pricing, profitability, account strategy</p>
+  </div>
+  <div class="panel">
+    <p class="label">Priority</p>
+    <p class="subhead">Proposed P2</p>
+    <p class="caption">Depends on medallion onboarding.</p>
+  </div>
+</section></div>
+
+<!-- ============ 5. AI Metrics ============ -->
+<div class="stage"><section class="slide s-dark a-azure l-split">
+  <div class="col">
+    <p class="eyebrow"><span class="num">04</span>AI Metrics</p>
+    <h2 class="title">Where AI is <span class="hl">driving value</span>.</h2>
+    <p class="body"><strong>Owner:</strong> [Ops / Innovation Lead]</p>
+    <p class="body"><strong>Experience:</strong> Adoption, quality impact, productivity uplift (from Training + QA)</p>
+    <p class="body"><strong>Decisions:</strong> Which tools scale, where to invest next</p>
+  </div>
+  <div class="panel">
+    <p class="label">Priority</p>
+    <p class="subhead">Proposed P2</p>
+    <p class="caption">Depends on XOOS data connection.</p>
+  </div>
+</section></div>
+
+<!-- ============ 6. Supporting Layer ============ -->
+<div class="stage"><section class="slide s-light a-violet l-columns">
+  <div class="head">
+    <p class="eyebrow"><span class="num">05</span>What Powers It</p>
+    <h2 class="title">Tool features need a <span class="hl">foundation</span>.</h2>
+    <p class="lede">Data governance, medallion pipelines, and MCP skills run in parallel.</p>
+  </div>
+  <div class="cols">
+    <div class="col"><hr class="rule"><p class="label">Data Governance</p><p class="caption">Ontologies, definitions, semantic clarity across domains.</p></div>
+    <div class="col"><hr class="rule"><p class="label">Medallion Pipelines</p><p class="caption">Bronze → Silver → Gold. Account metrics, financial data, WFM, QA.</p></div>
+    <div class="col"><hr class="rule"><p class="label">MCP Skills</p><p class="caption">LLM-ready formats. Business review deck generation. Analytics queries.</p></div>
+  </div>
+</section></div>
+
+<script>
+(function(){
+  var fit=function(){
+    var s=Math.min(1,(window.innerWidth-48)/1280);
+    document.documentElement.style.setProperty('--fit',s);
+  };
+  window.addEventListener('resize',fit); fit();
+})();
+</script>
+</body>
+</html>
