@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>XOOS Analytics · Transaction data pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ecf1f3; --panel:#ffffff; --ink:#181818; --muted:#5b6166; --line:rgba(24,24,24,.14);
+  --blue:#307cfc; --dblue:#204bee; --mint:#a9f2d5; --green:#55b685; --orange:#e9a23c; --purple:#845eee; --pink:#d95597;
+  --wh-head:#204bee; --wh-head-ink:#ffffff;
+  --app-tint:rgba(233,162,60,.12); --wh-tint:rgba(32,75,238,.06); --ext-tint:rgba(24,24,24,.04);
+  --edge:#5b6166;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#181818; --panel:#222426; --ink:#ecf1f3; --muted:#a3abb0; --line:rgba(236,241,243,.14);
+    --wh-head:#307cfc; --app-tint:rgba(233,162,60,.14); --wh-tint:rgba(48,124,252,.09); --ext-tint:rgba(236,241,243,.04);
+    --edge:#a3abb0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#181818; --panel:#222426; --ink:#ecf1f3; --muted:#a3abb0; --line:rgba(236,241,243,.14);
+  --wh-head:#307cfc; --app-tint:rgba(233,162,60,.14); --wh-tint:rgba(48,124,252,.09); --ext-tint:rgba(236,241,243,.04);
+  --edge:#a3abb0;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:1360px;margin:0 auto;padding:40px 28px 56px}
+header h1{font-size:clamp(28px,3.4vw,44px);font-weight:900;letter-spacing:-.02em;line-height:1.1;margin:0 0 12px;max-width:26ch}
+header h1 .hl{color:var(--dblue)}
+:root[data-theme="dark"] header h1 .hl{color:var(--mint)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) header h1 .hl{color:var(--mint)}}
+header p{margin:0;color:var(--muted);font-size:17px;max-width:70ch}
+.legend{display:flex;flex-wrap:wrap;gap:18px;margin:24px 0 20px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:28px;height:0;border-top:2px solid var(--edge)}
+.sw.ret{border-top:2px dashed var(--purple)}
+.sw.pii{width:14px;height:14px;border:0;border-radius:3px;background:var(--mint)}
+
+.board{position:relative;display:grid;grid-template-columns:minmax(220px,1fr) minmax(460px,2.1fr) minmax(220px,1fr);gap:56px}
+#edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+.zone{position:relative;z-index:1;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.zone.ext{background:var(--ext-tint);border:1.5px dashed var(--line)}
+.zone.wh{background:var(--wh-tint);border:1.5px solid var(--line)}
+.zone.app{justify-content:space-between;background:var(--app-tint);border:1.5px solid var(--line)}
+.zone>h2{font-size:14px;font-weight:700;margin:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.zone>h2 small{font-weight:400;color:var(--muted);font-size:12px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.card h3{margin:0 0 4px;font-size:14px;font-weight:700}
+.card p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.card .grain{display:inline-block;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--dblue);background:rgba(48,124,252,.10);border-radius:4px;padding:2px 7px}
+:root[data-theme="dark"] .card .grain{color:#9dbdff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .card .grain{color:#9dbdff}}
+.card.pii{border-left:4px solid var(--green)}
+.card.score{border:1.5px dashed var(--purple)}
+.appstack{display:flex;flex-direction:column;gap:14px;margin-top:auto;margin-bottom:auto}
+.sources{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.src{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;font-weight:600}
+.src small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+
+.layer{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
+.layer>.lh{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--wh-head);color:var(--wh-head-ink);font-weight:700;font-size:13.5px}
+.layer>.lh .res{font-weight:600;font-size:11.5px;background:rgba(255,255,255,.2);border-radius:4px;padding:1px 7px}
+.layer.bronze>.lh{background:#8a5a2b}
+.layer.silver>.lh{background:#5f6b73}
+.layer.gold>.lh{background:#b8860b}
+.layer .body{padding:12px;display:grid;gap:10px}
+.layer .body.two{grid-template-columns:1fr 1fr}
+.layer .card{border-radius:8px}
+
+.cycle{margin-top:44px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;counter-reset:s}
+.cycle h2{grid-column:1/-1;font-size:18px;font-weight:700;margin:0 0 4px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;counter-increment:s}
+.step::before{content:counter(s);display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--dblue);color:#fff;font-size:12px;font-weight:700;margin-bottom:6px}
+.step b{display:block;font-size:13.5px}
+.step span{font-size:12.5px;color:var(--muted)}
+.rules{margin-top:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rules h2{grid-column:1/-1;font-size:18px;font-weight:700;margin:0 0 4px}
+.rule{border-top:3px solid var(--green);padding:10px 2px 0}
+.rule b{display:block;font-size:13.5px;margin-bottom:2px}
+.rule span{font-size:12.5px;color:var(--muted)}
+
+@media (max-width:1080px){
+  .board{grid-template-columns:1fr;gap:24px}
+  #edges{display:none}
+  .zone+.zone::before{content:"↓";position:absolute;top:-22px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:16px}
+  .cycle{grid-template-columns:1fr 1fr}
+  .rules{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .layer .body.two,.appstack{display:flex;flex-direction:column;gap:14px;margin-top:auto;margin-bottom:auto}
+.sources{grid-template-columns:1fr}
+  .cycle,.rules{grid-template-columns:1fr}
+  .wrap{padding:28px 16px 40px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Transaction data: <span class="hl">score online, govern in the warehouse</span></h1>
+  <p>High-resolution conversations enter once, are lowered in resolution layer by layer, feed backend AI scoring through a one-way contract, and return as governed, versioned facts next to classic analytics.</p>
+</header>
+
+<div class="legend">
+  <span><i class="sw"></i>Forward data flow</span>
+  <span><i class="sw ret"></i>Reverse refresh of calculated scores</span>
+  <span><i class="sw pii"></i>PII removed before the warehouse</span>
+</div>
+
+<div class="board" id="board">
+  <svg id="edges" aria-hidden="true">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9" fill="none" stroke="var(--edge)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9" fill="none" stroke="#845eee" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+  </svg>
+
+  <!-- Capture -->
+  <section class="zone ext" aria-label="Capture, outside the warehouse">
+    <h2>Capture <small>outside warehouse</small></h2>
+    <div class="sources" id="n-src">
+      <div class="src">Voice, stereo<small>channel = speaker</small></div>
+      <div class="src">Voice, mono<small>diarized</small></div>
+      <div class="src">Chat<small>1 session, clear sides</small></div>
+      <div class="src">Email<small>append-only thread</small></div>
+      <div class="src" style="grid-column:1/-1">CRM records<small>dispositions, cases, outcomes</small></div>
+    </div>
+    <div class="card pii" id="n-ing">
+      <h3>Ingestion service</h3>
+      <p>ASR with diarization for voice. PII redaction for every channel, with typed placeholders and a versioned redaction model.</p>
+    </div>
+    <div class="card" id="n-blob">
+      <h3>Blob / S3</h3>
+      <p>Original recordings for the retention period. The warehouse stores only a pointer.</p>
+      <span class="grain">R0 · audio</span>
+    </div>
+  </section>
+
+  <!-- Warehouse -->
+  <section class="zone wh" id="z-wh" aria-label="Warehouse">
+    <h2>Warehouse <small>medallion, runs twice a day</small></h2>
+
+    <div class="layer bronze" id="n-bronze">
+      <div class="lh">Bronze <span class="res">R1</span></div>
+      <div class="body two">
+        <div class="card"><h3>Raw conversations</h3><p>Raw ASR JSON with word timestamps and confidence, chat and email messages as received, CRM events, recording pointers.</p><span class="grain">as received</span></div>
+        <div class="card score" id="n-landing"><h3>Score landing zone</h3><p>Backend results arrive as a new source: scores, criteria, evidence, versions, input hash.</p><span class="grain">score run × conversation</span></div>
+      </div>
+    </div>
+
+    <div class="layer silver" id="n-sbase">
+      <div class="lh">Silver base <span class="res">R2</span></div>
+      <div class="body two">
+        <div class="card"><h3>Conversation model</h3><p>Conversation → session → message. Speaker roles, multi-session stitching, email quote stripping, dimension keys.</p><span class="grain">message · session · conversation</span></div>
+        <div class="card"><h3>Interaction signals</h3><p>Talk ratio, silence, hold, overtalk, response latency. Channel-aware, with diarization confidence.</p><span class="grain">conversation</span></div>
+      </div>
+    </div>
+
+    <div class="layer silver" id="n-sext">
+      <div class="lh">Silver External <span class="res">R3</span></div>
+      <div class="body">
+        <div class="card"><h3>Scoring contract</h3><p>Versioned views for the backend with compact, task-shaped payloads: condensed text, criterion windows, precomputed facts. Never contains score fields.</p><span class="grain">conversation × task</span></div>
+      </div>
+    </div>
+
+    <div class="layer silver" id="n-sscore">
+      <div class="lh">Silver scores</div>
+      <div class="body">
+        <div class="card score"><h3>Conformed scores</h3><p>Append-only and versioned, with a current flag and evidence pointers for each QA criterion.</p><span class="grain">conversation × score × version</span></div>
+      </div>
+    </div>
+
+    <div class="layer silver" id="n-sref">
+      <div class="lh">Silver refined</div>
+      <div class="body">
+        <div class="card"><h3>Operational facts</h3><p>Built from Silver base and conformed scores, at the grains classic analytics use. Each metric is defined once, here.</p><span class="grain">agent × day · queue × interval · driver × day</span></div>
+      </div>
+    </div>
+
+    <div class="layer gold" id="n-gold">
+      <div class="lh">Gold <span class="res">R4</span></div>
+      <div class="body two">
+        <div class="card"><h3>Interaction scorecards</h3><p>Drivers, QA by criterion, predicted and surveyed CSAT, with evidence.</p><span class="grain">conversation</span></div>
+        <div class="card"><h3>Performance KPIs</h3><p>Agent, queue and tenant rollups. Every metric labeled deterministic or model-derived.</p><span class="grain">agent · queue · tenant × period</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Application -->
+  <section class="zone app" aria-label="Application backend">
+    <h2>XOOS backend <small>application side</small></h2>
+    <div class="appstack">
+    <div class="card" id="n-be">
+      <h3>Scoring functions</h3>
+      <p>Classifiers for intent, reason and outcome. Rule checks and LLM rubric criteria for QA. Predicted CSAT model.</p>
+      <span class="grain">rescore only on new input hash or version</span>
+    </div>
+    <div class="card" id="n-online">
+      <h3>Online display</h3>
+      <p>Live interaction scores for operations, shown as soon as the backend calculates them.</p>
+    </div>
+    </div>
+    <div class="card" id="n-cons">
+      <h3>Analytics consumers</h3>
+      <p>XOOS Analytics UI, API and MCP read governed history from Gold: dashboards, Business Reviews, analytics teams.</p>
+    </div>
+  </section>
+</div>
+
+<section class="cycle" aria-label="Run cycle">
+  <h2>Each run, twice a day</h2>
+  <div class="step"><b>Ingest</b><span>Transcribe, diarize and redact. Load Bronze.</span></div>
+  <div class="step"><b>Model conversations</b><span>Build Silver base and refresh Silver External.</span></div>
+  <div class="step"><b>Score</b><span>Backend reads new payloads, scores and displays online.</span></div>
+  <div class="step"><b>Land and conform</b><span>Scores land in Bronze and are conformed right after the scoring window.</span></div>
+  <div class="step"><b>Publish</b><span>Build Silver refined, then Gold.</span></div>
+</section>
+
+<section class="rules" aria-label="Design rules">
+  <h2>Rules that keep it safe</h2>
+  <div class="rule"><b>One-way contract</b><span>The backend never reads its own scores through Silver External, so loops cannot form.</span></div>
+  <div class="rule"><b>Idempotent scoring</b><span>Input hash plus model and guideline versions decide whether a rescore happens.</span></div>
+  <div class="rule"><b>No PII downstream</b><span>Redaction at ingestion for all channels. Recordings stay in blob storage.</span></div>
+  <div class="rule"><b>Visible provenance</b><span>Every metric states how it was produced, which version and how confident.</span></div>
+</section>
+</div>
+
+<script>
+(function(){
+  var edges=[
+    ["n-src","n-ing"],["n-ing","n-blob"],["n-ing","n-bronze"],
+    ["n-bronze","n-sbase"],["n-sbase","n-sext"],["n-sext","n-be"],
+    ["n-be","n-online"],["n-be","n-landing","ret"],["n-landing","n-sscore","side"],
+    ["n-sscore","n-sref"],["n-sref","n-gold"],["n-gold","n-cons"]
+  ];
+  var svg=document.getElementById("edges"),board=document.getElementById("board");
+  function box(id){var e=document.getElementById(id),r=e.getBoundingClientRect(),b=board.getBoundingClientRect();return{l:r.left-b.left,t:r.top-b.top,r:r.right-b.left,b:r.bottom-b.top,cx:(r.left+r.right)/2-b.left,cy:(r.top+r.bottom)/2-b.top};}
+  function draw(){
+    svg.querySelectorAll("path.e").forEach(function(p){p.remove();});
+    if(getComputedStyle(svg).display==="none")return;
+    edges.forEach(function(e){
+      var a=box(e[0]),c=box(e[1]),x1,y1,x2,y2,d;
+      if(e[2]==="side"){var z=box("z-wh"),xs=z.r+18;x1=a.r;y1=a.b-12;x2=c.r+3;y2=c.cy;
+        d="M"+x1+" "+y1+" L"+(xs-8)+" "+y1+" Q"+xs+" "+y1+" "+xs+" "+(y1+8)+" L"+xs+" "+(y2-8)+" Q"+xs+" "+y2+" "+(xs-8)+" "+y2+" L"+x2+" "+y2;}
+      else if(c.l>a.r+8){x1=a.r;y1=a.cy;x2=c.l-3;y2=c.cy;var m=(x1+x2)/2;d="M"+x1+" "+y1+" C"+m+" "+y1+" "+m+" "+y2+" "+x2+" "+y2;}
+      else if(a.l>c.r+8){x1=a.l;y1=a.cy;x2=c.r+3;y2=c.cy;var m2=(x1+x2)/2;d="M"+x1+" "+y1+" C"+m2+" "+y1+" "+m2+" "+y2+" "+x2+" "+y2;}
+      else if(c.t>a.b-2){x1=Math.max(a.l+20,Math.min(a.r-20,c.cx));x2=x1;if(x2<c.l+20||x2>c.r-20){x2=c.cx;}y1=a.b;y2=c.t-3;var my=(y1+y2)/2;d="M"+x1+" "+y1+" C"+x1+" "+my+" "+x2+" "+my+" "+x2+" "+y2;}
+      else{x1=a.cx;y1=a.t;x2=c.cx;y2=c.b+3;var my2=(y1+y2)/2;d="M"+x1+" "+y1+" C"+x1+" "+my2+" "+x2+" "+my2+" "+x2+" "+y2;}
+      var p=document.createElementNS("http://www.w3.org/2000/svg","path");
+      p.setAttribute("d",d);p.setAttribute("class","e");p.setAttribute("fill","none");
+      if(e[2]==="ret"||e[2]==="side"){p.setAttribute("stroke","#845eee");p.setAttribute("stroke-dasharray","6 5");p.setAttribute("marker-end","url(#ahp)");}
+      else{p.setAttribute("stroke","var(--edge)");p.setAttribute("marker-end","url(#ah)");}
+      p.setAttribute("stroke-width","1.6");
+      svg.appendChild(p);
+    });
+  }
+  window.addEventListener("resize",draw);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(draw);}
+  window.addEventListener("load",draw);draw();
+})();
+</script>
+</body>
+</html>

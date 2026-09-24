@@ -1,0 +1,203 @@
+%% XOOS Analytics - Transaction data pipeline: detailed flow with grain
+%% Render with Mermaid (mermaid.live, GitHub, GitLab, Notion, VS Code Mermaid preview)
+%% Solid arrows = forward flow | dotted arrows = reverse refresh of backend scores
+%% R0-R4 = resolution level (R0 audio, R1 raw text, R2 normalized, R3 task payloads, R4 facts)
+
+flowchart LR
+
+  %% ---------------- SOURCES ----------------
+  subgraph SRC["Sources - outside warehouse"]
+    direction TB
+    V_ST["Voice - stereo<br/><i>grain: recording</i><br/>speaker = audio channel"]
+    V_MO["Voice - mono<br/><i>grain: recording</i><br/>speaker = diarization model"]
+    CHAT["Chat<br/><i>grain: message</i><br/>single session, sender field"]
+    EMAIL["Email<br/><i>grain: email</i><br/>append-only, many sessions"]
+    CRM["CRM<br/><i>grain: event</i><br/>cases, dispositions, outcomes"]
+  end
+
+  %% ---------------- INGESTION ----------------
+  subgraph ING["Ingestion service - app side"]
+    direction TB
+    ASR["ASR + diarization<br/>word timestamps, confidence<br/>asr_engine_version"]
+    PII["PII redaction - ALL channels<br/>typed placeholders e.g. [CARD_NUMBER]<br/>redaction_model_version"]
+  end
+
+  BLOB[("Blob / S3 - R0<br/>original recordings<br/>retention period only")]
+
+  %% ---------------- BRONZE ----------------
+  subgraph BRZ["BRONZE - R1 - as received"]
+    direction TB
+    B_REC["brz_recording_ref<br/><i>grain: 1 row / recording</i><br/>uri, checksum, channel_layout,<br/>consent_flag, retention_expiry"]
+    B_ASR["brz_transcript_raw<br/><i>grain: 1 row / transcription run</i><br/>raw ASR JSON, words + timestamps,<br/>speaker labels, confidence"]
+    B_CHAT["brz_chat_message<br/><i>grain: 1 row / message</i>"]
+    B_EMAIL["brz_email_message<br/><i>grain: 1 row / email, append-only</i><br/>thread_id, in_reply_to, body_redacted"]
+    B_CRM["brz_crm_event<br/><i>grain: 1 row / CRM event</i>"]
+    B_LAND["brz_score_landing<br/><i>grain: score run x conversation</i><br/>scores, criteria, evidence,<br/>versions, input_hash, run_id"]
+  end
+
+  %% ---------------- SILVER BASE ----------------
+  subgraph SLV["SILVER BASE - R2 - conversation model"]
+    direction TB
+    S_MSG["slv_message<br/><i>grain: message / utterance</i><br/>speaker_role, turn_no, start_ts, end_ts,<br/>text_redacted, diarization_conf,<br/>is_quoted_stripped, is_system"]
+    S_SES["slv_session<br/><i>grain: session</i><br/>channel, started_at, ended_at,<br/>agent_key, queue_key"]
+    S_CONV["slv_conversation<br/><i>grain: conversation</i><br/>status open/closed, opened_at, closed_at,<br/>reopen_count, tenant_key, customer_key"]
+    S_SIG["slv_conversation_signals<br/><i>grain: conversation x channel</i><br/>talk_ratio, silence_pct, hold_sec,<br/>overtalk_sec*, response_latency,<br/>transfers, handle_time_def"]
+  end
+
+  DIM[("Warehouse dimensions<br/>agent, queue, tenant, customer,<br/>training, WFM schedule, CRM outcome")]
+
+  %% ---------------- SILVER EXTERNAL ----------------
+  subgraph SLX["SILVER EXTERNAL - R3 - scoring contract, versioned views"]
+    direction TB
+    X_PAY["slvx_conversation_payload<br/><i>grain: conversation x task</i><br/>compact text A:/C: + timestamps,<br/>boilerplate collapsed, structured facts,<br/>contract_version, input_hash"]
+    X_WIN["slvx_qa_window<br/><i>grain: conversation x QA criterion</i><br/>only the turns the criterion needs"]
+  end
+
+  %% ---------------- BACKEND ----------------
+  subgraph APP["XOOS backend - online"]
+    direction TB
+    BE_CLS["ML classifiers<br/>intent, reason, outcome, sentiment"]
+    BE_QA["QA engine<br/>rule checks + LLM rubric criteria"]
+    BE_CSAT["Predicted CSAT model<br/>calibrated on surveyed CSAT"]
+    BE_UI["Online display<br/>live interaction scores"]
+    BE_GATE{"new input_hash<br/>or new version?"}
+  end
+
+  %% ---------------- SILVER SCORES ----------------
+  subgraph SSC["SILVER SCORES - conformed, append-only"]
+    direction TB
+    S_SCORE["slv_score<br/><i>grain: conversation x score_type x version</i><br/>value, confidence, is_current,<br/>provisional/final, scored_at"]
+    S_CRIT["slv_score_criterion<br/><i>grain: conversation x criterion x version</i><br/>result, method rule/ML/LLM,<br/>evidence message_id + ts"]
+    S_ATTR["slv_score_attribution<br/><i>grain: conversation x agent x version</i><br/>QA per agent message,<br/>outcome/CSAT per conversation"]
+  end
+
+  %% ---------------- SILVER REFINED ----------------
+  subgraph SRF["SILVER REFINED - operational facts, each metric defined once"]
+    direction TB
+    R_AGD["slvr_agent_day<br/><i>grain: agent x day x channel</i>"]
+    R_QIN["slvr_queue_interval<br/><i>grain: queue x interval x channel</i>"]
+    R_DRV["slvr_driver_day<br/><i>grain: tenant x intent x reason x day</i>"]
+  end
+
+  %% ---------------- GOLD ----------------
+  subgraph GLD["GOLD - R4 - consumption, provenance labeled"]
+    direction TB
+    G_CARD["gld_interaction_scorecard<br/><i>grain: conversation, current version</i><br/>drivers, QA by criterion,<br/>predicted + surveyed CSAT, evidence"]
+    G_AGT["gld_agent_performance<br/><i>grain: agent x period</i>"]
+    G_QUE["gld_queue_performance<br/><i>grain: queue x period</i>"]
+    G_DRV["gld_driver_trends<br/><i>grain: tenant x driver x period</i>"]
+  end
+
+  subgraph CONS["Consumers"]
+    direction TB
+    UI["XOOS Analytics UI"]
+    API["API"]
+    MCP["MCP - Business Review skill"]
+  end
+
+  %% ================= FORWARD FLOW =================
+  V_ST --> ASR
+  V_MO --> ASR
+  V_ST -. audio .-> BLOB
+  V_MO -. audio .-> BLOB
+  ASR --> PII
+  CHAT --> PII
+  EMAIL --> PII
+  CRM --> PII
+
+  BLOB -- pointer --> B_REC
+  PII --> B_ASR
+  PII --> B_CHAT
+  PII --> B_EMAIL
+  PII --> B_CRM
+
+  B_ASR -- "speaker role assignment" --> S_MSG
+  B_CHAT --> S_MSG
+  B_EMAIL -- "strip quotes, signatures, footers" --> S_MSG
+  B_REC --> S_SES
+  B_CRM --> S_CONV
+  S_MSG --> S_SES
+  S_SES -- "multi-session stitching" --> S_CONV
+  S_MSG -- "word timestamps" --> S_SIG
+  DIM --> S_CONV
+
+  S_MSG --> X_PAY
+  S_CONV --> X_PAY
+  S_SIG -- "facts as fields" --> X_PAY
+  S_MSG --> X_WIN
+
+  X_PAY --> BE_GATE
+  X_WIN --> BE_GATE
+  BE_GATE -- yes --> BE_CLS
+  BE_GATE -- yes --> BE_QA
+  BE_GATE -- yes --> BE_CSAT
+  BE_CLS --> BE_UI
+  BE_QA --> BE_UI
+  BE_CSAT --> BE_UI
+
+  %% ================= REVERSE REFRESH =================
+  BE_CLS -. "reverse refresh" .-> B_LAND
+  BE_QA -. "reverse refresh" .-> B_LAND
+  BE_CSAT -. "reverse refresh" .-> B_LAND
+
+  B_LAND -- "conform keys + versions" --> S_SCORE
+  B_LAND --> S_CRIT
+  S_SCORE --> S_ATTR
+  S_CONV --> S_ATTR
+
+  %% ================= REFINED + GOLD =================
+  S_SIG --> R_AGD
+  S_SES --> R_AGD
+  S_ATTR --> R_AGD
+  S_SIG --> R_QIN
+  S_SES --> R_QIN
+  S_SCORE --> R_DRV
+  DIM --> R_AGD
+  DIM --> R_QIN
+
+  S_SCORE --> G_CARD
+  S_CRIT --> G_CARD
+  S_CONV --> G_CARD
+  R_AGD --> G_AGT
+  R_QIN --> G_QUE
+  R_DRV --> G_DRV
+
+  G_CARD --> UI
+  G_AGT --> UI
+  G_QUE --> API
+  G_DRV --> MCP
+  G_CARD --> MCP
+  G_CARD --> API
+
+  %% ================= STYLES =================
+  classDef ext fill:#f4f5f6,stroke:#8a9096,stroke-dasharray:4 3,color:#181818
+  classDef ing fill:#e9f8f1,stroke:#55b685,color:#181818
+  classDef brz fill:#f6ede4,stroke:#8a5a2b,color:#181818
+  classDef slv fill:#eef1f3,stroke:#5f6b73,color:#181818
+  classDef slx fill:#e6eefe,stroke:#307cfc,color:#181818
+  classDef app fill:#fcf1e2,stroke:#e9a23c,color:#181818
+  classDef score fill:#f1ecfd,stroke:#845eee,stroke-dasharray:5 3,color:#181818
+  classDef gld fill:#fbf3dc,stroke:#b8860b,color:#181818
+  classDef dim fill:#ffffff,stroke:#204bee,color:#181818
+
+  class V_ST,V_MO,CHAT,EMAIL,CRM,BLOB ext
+  class ASR,PII ing
+  class B_REC,B_ASR,B_CHAT,B_EMAIL,B_CRM brz
+  class B_LAND,S_SCORE,S_CRIT,S_ATTR score
+  class S_MSG,S_SES,S_CONV,S_SIG,R_AGD,R_QIN,R_DRV slv
+  class X_PAY,X_WIN slx
+  class BE_CLS,BE_QA,BE_CSAT,BE_UI,BE_GATE app
+  class G_CARD,G_AGT,G_QUE,G_DRV gld
+  class DIM dim
+  class UI,API,MCP ext
+
+  style SRC fill:#fafafa,stroke:#b5bbc0,stroke-dasharray:4 3
+  style ING fill:#fafafa,stroke:#55b685
+  style BRZ fill:#fdf9f5,stroke:#8a5a2b
+  style SLV fill:#f8f9fa,stroke:#5f6b73
+  style SLX fill:#f5f8ff,stroke:#307cfc
+  style APP fill:#fffaf3,stroke:#e9a23c
+  style SSC fill:#faf8ff,stroke:#845eee,stroke-dasharray:5 3
+  style SRF fill:#f8f9fa,stroke:#5f6b73
+  style GLD fill:#fffcf2,stroke:#b8860b
+  style CONS fill:#fafafa,stroke:#b5bbc0
